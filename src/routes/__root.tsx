@@ -78,9 +78,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Oi Chat — seu espaço de ideias" },
-      { name: "description", content: "Converse, explore possibilidades e transforme suas ideias em algo real com o Oi Chat." },
-      { name: "author", content: "Oi Chat" },
+      { title: "ASDCC Ajuricaba — Associação das Donas de Casa" },
+      { name: "description", content: "Conheça a Associação das Donas de Casa de Ajuricaba, suas ações, comunicados e formas de participar." },
+      { name: "author", content: "ASDCC Ajuricaba" },
       { property: "og:title", content: "Oi Chat" },
       { property: "og:description", content: "Seu espaço de ideias." },
       { property: "og:type", content: "website" },
