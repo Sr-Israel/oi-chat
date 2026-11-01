@@ -17,7 +17,7 @@ const sections: { id: Section; label: string; icon: typeof Newspaper }[] = [
 ];
 
 const emptyForm = { title: "", slug: "", summary: "", content: "", description: "", category: "", album: "", status: "draft", is_public: true, is_published: true };
-const bucketFor = (section: Section) => section === "gallery" ? "asdcc-imagens" : "asdcc-documentos";
+const bucketFor = (section: Section) => section === "gallery" || section === "news" ? "asdcc-imagens" : "asdcc-documentos";
 
 function AdminPage() {
   const [session, setSession] = useState<any>(null);
@@ -29,6 +29,7 @@ function AdminPage() {
   const [form, setForm] = useState<RowData>(emptyForm);
   const [editing, setEditing] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
+  const [newsFiles, setNewsFiles] = useState<File[]>([]);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
@@ -69,16 +70,27 @@ function AdminPage() {
     setEditing(row.id);
     setForm({ ...emptyForm, ...row, slug: row.slug ?? "" });
     setFile(null);
+    setNewsFiles([]);
     setMessage("");
   }
 
-  function startNew() { setEditing(null); setForm({ ...emptyForm }); setFile(null); setMessage(""); }
+  function startNew() { setEditing(null); setForm({ ...emptyForm }); setFile(null); setNewsFiles([]); setNewsFiles([]); setMessage(""); }
 
   async function save(event: FormEvent) {
     event.preventDefault();
     setLoading(true); setMessage("");
     try {
       let uploadedPath: string | undefined;
+      const uploadedNewsPaths: string[] = [];
+      if (section === "news" && newsFiles.length) {
+        for (const newsFile of newsFiles) {
+          const safeName = newsFile.name.normalize("NFD").replace(/[\\u0300-\\u036f]/g, "").replace(/[^a-zA-Z0-9._-]/g, "-");
+          const path = `news/${Date.now()}-${Math.random().toString(36).slice(2)}-${safeName}`;
+          const { error: uploadError } = await supabase.storage.from("asdcc-imagens").upload(path, newsFile, { upsert: false });
+          if (uploadError) throw uploadError;
+          uploadedNewsPaths.push(path);
+        }
+      }
       if (file) {
         const safeName = file.name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-zA-Z0-9._-]/g, "-");
         const path = `${Date.now()}-${safeName}`;
@@ -89,7 +101,7 @@ function AdminPage() {
 
       let payload: RowData;
       if (section === "news") {
-        payload = { title: form.title.trim(), slug: (form.slug || form.title).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""), summary: form.summary, content: form.content, status: form.status, ...(uploadedPath ? { cover_image: uploadedPath } : {}), ...(form.status === "published" && !form.published_at ? { published_at: new Date().toISOString() } : {}) };
+        payload = { title: form.title.trim(), slug: (form.slug || form.title).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""), summary: form.summary, content: form.content, status: form.status, ...(uploadedPath ? { cover_image: uploadedPath } : {}), images: [...(Array.isArray(form.images) ? form.images : []), ...uploadedNewsPaths], ...(form.status === "published" && !form.published_at ? { published_at: new Date().toISOString() } : {}) };
       } else if (section === "projects") {
         payload = { title: form.title.trim(), description: form.description, category: form.category, status: form.status, ...(uploadedPath ? { cover_image: uploadedPath } : {}) };
       } else if (section === "gallery") {
@@ -139,7 +151,7 @@ function AdminPage() {
       <div className="mt-8 grid gap-7 lg:grid-cols-[minmax(0,1fr)_minmax(300px,.85fr)]">
         <div className="rounded-2xl border border-[#eee5ef] bg-white p-5"><h3 className="font-black text-[#432255]">Conteúdos cadastrados</h3><div className="mt-4 space-y-3">{rows.length === 0 ? <p className="rounded-xl bg-[#faf8fb] p-5 text-sm text-[#817586]">Nenhum registro nesta seção ainda.</p> : rows.map(row => <article key={row.id} className="flex items-start gap-3 rounded-xl border border-[#f0eaf2] p-4"><div className="min-w-0 flex-1"><p className="font-bold text-[#4c2869]">{row.title || "Sem título"}</p><p className="mt-1 text-xs text-[#94869a]">{row.status || (row.is_published ? "Publicado" : "Não publicado") || (row.is_public ? "Público" : "Privado")}</p></div><button aria-label="Editar" onClick={() => startEdit(row)} className="rounded-lg p-2 text-[#80539a] hover:bg-[#f5eff7]"><Pencil size={16}/></button><button aria-label="Excluir" onClick={() => remove(row)} className="rounded-lg p-2 text-red-500 hover:bg-red-50"><Trash2 size={16}/></button></article>)}</div></div>
         <form onSubmit={save} className="rounded-2xl border border-[#eee5ef] bg-white p-5"><h3 className="font-black text-[#432255]">{editing ? "Editar conteúdo" : "Novo conteúdo"}</h3><label className="mt-5 block text-xs font-bold text-[#665b6d]">Título *</label><input value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} required className="mt-2 w-full rounded-xl border border-[#e5dbe9] px-3 py-3 text-sm outline-none focus:border-[#80539a]"/>
-          {section === "news" && <><label className="mt-4 block text-xs font-bold text-[#665b6d]">Slug (opcional)</label><input value={form.slug} onChange={e => setForm({ ...form, slug: e.target.value })} className="mt-2 w-full rounded-xl border border-[#e5dbe9] px-3 py-3 text-sm"/><label className="mt-4 block text-xs font-bold text-[#665b6d]">Resumo</label><textarea value={form.summary} onChange={e => setForm({ ...form, summary: e.target.value })} rows={2} className="mt-2 w-full rounded-xl border border-[#e5dbe9] px-3 py-3 text-sm"/><label className="mt-4 block text-xs font-bold text-[#665b6d]">Conteúdo</label><textarea value={form.content} onChange={e => setForm({ ...form, content: e.target.value })} rows={5} className="mt-2 w-full rounded-xl border border-[#e5dbe9] px-3 py-3 text-sm"/><label className="mt-4 block text-xs font-bold text-[#665b6d]">Publicação</label><select value={form.status} onChange={e => setForm({ ...form, status: e.target.value })} className="mt-2 w-full rounded-xl border border-[#e5dbe9] px-3 py-3 text-sm"><option value="draft">Rascunho</option><option value="published">Publicado</option></select></>}
+          {section === "news" && <><label className="mt-4 block text-xs font-bold text-[#665b6d]">Foto de capa (opcional)</label><label className="mt-2 flex cursor-pointer items-center gap-3 rounded-xl border border-dashed border-[#cbb8d2] p-4 text-sm text-[#80539a]"><Upload size={18}/><span className="min-w-0 truncate">{file?.name || "Selecionar foto de capa"}</span><input type="file" accept="image/jpeg,image/png,image/webp" onChange={e => setFile(e.target.files?.[0] ?? null)} className="hidden" /></label><label className="mt-4 block text-xs font-bold text-[#665b6d]">Fotos da notícia (pode selecionar várias)</label><label className="mt-2 flex cursor-pointer items-center gap-3 rounded-xl border border-dashed border-[#cbb8d2] p-4 text-sm text-[#80539a]"><Images size={18}/><span className="min-w-0 truncate">{newsFiles.length ? `${newsFiles.length} foto(s) selecionada(s)` : "Selecionar fotos"}</span><input type="file" multiple accept="image/jpeg,image/png,image/webp" onChange={e => setNewsFiles(Array.from(e.target.files ?? []))} className="hidden" /></label>{Array.isArray(form.images) && form.images.length > 0 && <p className="mt-2 text-xs text-[#817586]">{form.images.length} foto(s) já cadastrada(s). Novas fotos serão adicionadas.</p>}<label className="mt-4 block text-xs font-bold text-[#665b6d]">Slug (opcional)</label><input value={form.slug} onChange={e => setForm({ ...form, slug: e.target.value })} className="mt-2 w-full rounded-xl border border-[#e5dbe9] px-3 py-3 text-sm"/><label className="mt-4 block text-xs font-bold text-[#665b6d]">Resumo</label><textarea value={form.summary} onChange={e => setForm({ ...form, summary: e.target.value })} rows={2} className="mt-2 w-full rounded-xl border border-[#e5dbe9] px-3 py-3 text-sm"/><label className="mt-4 block text-xs font-bold text-[#665b6d]">Conteúdo</label><textarea value={form.content} onChange={e => setForm({ ...form, content: e.target.value })} rows={5} className="mt-2 w-full rounded-xl border border-[#e5dbe9] px-3 py-3 text-sm"/><label className="mt-4 block text-xs font-bold text-[#665b6d]">Publicação</label><select value={form.status} onChange={e => setForm({ ...form, status: e.target.value })} className="mt-2 w-full rounded-xl border border-[#e5dbe9] px-3 py-3 text-sm"><option value="draft">Rascunho</option><option value="published">Publicado</option></select></>}
           {section === "projects" && <><label className="mt-4 block text-xs font-bold text-[#665b6d]">Categoria</label><input value={form.category} onChange={e => setForm({ ...form, category: e.target.value })} placeholder="Habitacional, social..." className="mt-2 w-full rounded-xl border border-[#e5dbe9] px-3 py-3 text-sm"/><label className="mt-4 block text-xs font-bold text-[#665b6d]">Descrição</label><textarea value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} rows={5} className="mt-2 w-full rounded-xl border border-[#e5dbe9] px-3 py-3 text-sm"/><label className="mt-4 block text-xs font-bold text-[#665b6d]">Visibilidade</label><select value={form.status} onChange={e => setForm({ ...form, status: e.target.value })} className="mt-2 w-full rounded-xl border border-[#e5dbe9] px-3 py-3 text-sm"><option value="draft">Rascunho</option><option value="published">Publicado</option></select></>}
           {section === "gallery" && <><label className="mt-4 block text-xs font-bold text-[#665b6d]">Álbum</label><input value={form.album} onChange={e => setForm({ ...form, album: e.target.value })} className="mt-2 w-full rounded-xl border border-[#e5dbe9] px-3 py-3 text-sm"/><label className="mt-4 block text-xs font-bold text-[#665b6d]">Descrição</label><textarea value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} rows={2} className="mt-2 w-full rounded-xl border border-[#e5dbe9] px-3 py-3 text-sm"/><label className="mt-4 flex items-center gap-2 text-sm"><input type="checkbox" checked={form.is_published} onChange={e => setForm({ ...form, is_published: e.target.checked })}/> Exibir no site</label></>}
           {section === "documents" && <><label className="mt-4 block text-xs font-bold text-[#665b6d]">Categoria</label><input value={form.category} onChange={e => setForm({ ...form, category: e.target.value })} className="mt-2 w-full rounded-xl border border-[#e5dbe9] px-3 py-3 text-sm"/><label className="mt-4 block text-xs font-bold text-[#665b6d]">Descrição</label><textarea value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} rows={2} className="mt-2 w-full rounded-xl border border-[#e5dbe9] px-3 py-3 text-sm"/><label className="mt-4 flex items-center gap-2 text-sm"><input type="checkbox" checked={form.is_public} onChange={e => setForm({ ...form, is_public: e.target.checked })}/> Disponibilizar publicamente</label></>}
