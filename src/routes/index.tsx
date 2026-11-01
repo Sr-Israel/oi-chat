@@ -56,10 +56,10 @@ function Index() {
       ]);
       if (!active) return;
       const [news, projects, gallery, documents] = await Promise.all([
-        Promise.all((newsResult.data ?? []).map(async (item: any) => ({ ...item, imageUrl: item.cover_image ? (await supabase.storage.from("asdcc-imagens").createSignedUrl(item.cover_image, 3600)).data?.signedUrl : null }))),
-        Promise.all((projectsResult.data ?? []).map(async (item: any) => ({ ...item, imageUrl: item.cover_image ? (await supabase.storage.from("asdcc-imagens").createSignedUrl(item.cover_image, 3600)).data?.signedUrl : null }))),
-        Promise.all((galleryResult.data ?? []).map(async (item: any) => ({ ...item, imageUrl: (await supabase.storage.from("asdcc-imagens").createSignedUrl(item.image_url, 3600)).data?.signedUrl }))),
-        Promise.all((documentsResult.data ?? []).map(async (item: any) => ({ ...item, fileUrl: (await supabase.storage.from("asdcc-documentos").createSignedUrl(item.file_url, 3600)).data?.signedUrl }))),
+        Promise.all((newsResult.data ?? []).map(async (item: any) => ({ ...item, imageUrl: item.cover_image ? (await supabase.storage.from("asdcc-imagens").getPublicUrl(item.cover_image)).data.publicUrl : null }))),
+        Promise.all((projectsResult.data ?? []).map(async (item: any) => ({ ...item, imageUrl: item.cover_image ? (await supabase.storage.from("asdcc-imagens").getPublicUrl(item.cover_image)).data.publicUrl : null }))),
+        Promise.all((galleryResult.data ?? []).map(async (item: any) => ({ ...item, imageUrl: (await supabase.storage.from("asdcc-imagens").getPublicUrl(item.image_url)).data.publicUrl }))),
+        Promise.all((documentsResult.data ?? []).map(async (item: any) => ({ ...item, fileUrl: (await supabase.storage.from("asdcc-documentos").createSignedUrl(item.file_url, 3600)).data.publicUrl }))),
       ]);
       if (active) { setNewsItems(news); setProjectItems(projects); setGalleryItems(gallery); setDocumentItems(documents); }
     }
