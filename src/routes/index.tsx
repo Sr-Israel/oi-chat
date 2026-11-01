@@ -134,7 +134,14 @@ function Index() {
           <div>
             <p className="text-lg leading-8 text-[#6e6273]">A Associação das Donas de Casa do Bairro Caranã / Residencial Ajuricaba (ASDCC) desenvolve um trabalho social voltado à luta pela moradia e à promoção de melhores condições de vida para famílias de Boa Vista, Roraima.</p>
             <p className="mt-5 leading-7 text-[#817586]">Com uma trajetória construída por meio da organização comunitária e da parceria com diferentes instituições, a associação segue atuando para transformar o direito à moradia em oportunidades concretas para as famílias.</p>
-            <p className="mt-5 text-sm font-bold text-[#542477]">Presidente: Carla Cristina Rocha</p>
+            <div className="mt-7 rounded-2xl border border-[#eee5ef] bg-[#fbf7fc] p-5">
+              <h3 className="text-sm font-extrabold text-[#542477]">Dados institucionais</h3>
+              <div className="mt-3 space-y-2 text-sm leading-6 text-[#74697a]">
+                <p><strong className="text-[#4c2869]">CNPJ:</strong> 05.510.860/0001-99</p>
+                <p><strong className="text-[#4c2869]">Endereço:</strong> Avenida João Liberato, 705, bairro Caranã, Boa Vista – RR</p>
+                <p><strong className="text-[#4c2869]">Presidente:</strong> Carla Cristina Rocha</p>
+              </div>
+            </div>
           </div>
         </div>
         <div className="mt-14 grid gap-4 md:grid-cols-3">{values.map(({ icon: Icon, title, text }) => <article key={title} className="rounded-3xl border border-[#eee5ef] bg-white p-7 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"><div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#f4edf6] text-[#80539a]"><Icon size={23} /></div><h3 className="mt-6 text-xl font-extrabold text-[#4c2869]">{title}</h3><p className="mt-3 text-sm leading-7 text-[#817586]">{text}</p></article>)}</div>
@@ -208,7 +215,7 @@ function Index() {
         <div className="mx-auto grid max-w-7xl gap-12 px-5 py-16 md:grid-cols-[1.2fr_.8fr_1fr] md:px-8">
           <div><Brand light /><p className="mt-6 max-w-sm text-sm leading-7 text-white/60">Uma trajetória de trabalho social, organização comunitária e compromisso com a moradia digna em Boa Vista, Roraima.</p></div>
           <div><h3 className="font-extrabold">Navegação</h3><div className="mt-5 space-y-3">{links.map(([label, href]) => <a key={href} href={href} className="block text-sm text-white/60 transition hover:text-white">{label}</a>)}</div></div>
-          <div><h3 className="font-extrabold">Fale com a associação</h3><div className="mt-5 space-y-4 text-sm text-white/65"><p className="flex items-center gap-3"><MapPin size={17} className="text-[#d6b96d]" /> Boa Vista – Roraima</p><p className="flex items-center gap-3"><Phone size={17} className="text-[#d6b96d]" /> Telefone a informar</p><p className="flex items-center gap-3"><Mail size={17} className="text-[#d6b96d]" /> E-mail a informar</p></div><p className="mt-5 text-xs text-white/40">Os canais oficiais serão adicionados após confirmação.</p></div>
+          <div><h3 className="font-extrabold">Fale com a associação</h3><div className="mt-5 space-y-4 text-sm text-white/65"><p className="flex items-start gap-3"><MapPin size={17} className="mt-0.5 shrink-0 text-[#d6b96d]" /> Avenida João Liberato, 705, bairro Caranã, Boa Vista – RR</p><p className="flex items-center gap-3"><FileText size={17} className="text-[#d6b96d]" /> CNPJ: 05.510.860/0001-99</p><p className="flex items-center gap-3"><Phone size={17} className="text-[#d6b96d]" /> Telefone não informado</p><p className="flex items-center gap-3"><Mail size={17} className="text-[#d6b96d]" /> E-mail não informado</p></div></div>
         </div>
         <div className="border-t border-white/10 px-5 py-5 text-center text-xs text-white/40">© {new Date().getFullYear()} ASDCC / Ajuricaba. Todos os direitos reservados.</div>
       </footer>
