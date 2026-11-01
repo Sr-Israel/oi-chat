@@ -6,7 +6,8 @@ import { LogOut, Plus, Pencil, Trash2, LayoutDashboard, Newspaper, Images, Folde
 export const Route = createFileRoute("/admin")({ component: AdminPage });
 
 type Section = "news" | "projects" | "gallery" | "documents";
-type RowData = Record<string, any>;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type RowData = any;
 
 const sections: { id: Section; label: string; icon: typeof Newspaper }[] = [
   { id: "news", label: "Notícias", icon: Newspaper },
@@ -100,8 +101,8 @@ function AdminPage() {
       }
       if (!payload.title) throw new Error("Informe um título.");
       const result = editing
-        ? await supabase.from(section).update(payload).eq("id", editing)
-        : await supabase.from(section).insert(payload);
+        ? await (supabase.from(section) as any).update(payload).eq("id", editing)
+        : await (supabase.from(section) as any).insert(payload);
       if (result.error) throw result.error;
       setMessage("Conteúdo salvo com sucesso.");
       setEditing(null); setForm({ ...emptyForm }); setFile(null);
