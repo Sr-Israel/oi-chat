@@ -114,21 +114,16 @@ function Index() {
 
           <div className="relative mx-auto w-full max-w-[470px]">
             <div className="absolute inset-5 rounded-[2.5rem] bg-[#e6d7eb] rotate-3" />
-            <div className="relative overflow-hidden rounded-[2.5rem] border border-white bg-white p-5 shadow-2xl shadow-[#45205f]/15">
-              <div className="rounded-[2rem] bg-gradient-to-br from-[#542477] via-[#68408a] to-[#9875a8] p-8 text-white">
-                <div className="flex items-center justify-between"><span className="text-[10px] font-bold tracking-[.2em] text-[#ead79e]">NOSSA TRAJETÓRIA</span><Home size={24} className="text-[#ead79e]" /></div>
-                <div className="mt-14">
-                  <p className="text-6xl font-black tracking-tight">200</p>
-                  <p className="mt-2 text-sm font-semibold text-white/85">unidades habitacionais entregues</p>
-                  <div className="my-7 h-px bg-white/20" />
-                  <p className="text-5xl font-black tracking-tight text-[#f0d88f]">435</p>
-                  <p className="mt-2 text-sm font-semibold text-white/85">moradias previstas no Residencial Esperança</p>
-                </div>
-                <p className="mt-12 text-[10px] font-semibold tracking-[.14em] text-white/65">MORADIA SOCIAL • BOA VISTA / RR</p>
-              </div>
-              <div className="flex items-center justify-between gap-3 px-3 pb-1 pt-5">
-                <div><p className="text-xs font-extrabold text-[#542477]">ASDCC / AJURICABA</p><p className="mt-1 text-[10px] text-[#8b7d90]">Associação e comunidade</p></div>
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#f5eff7] text-[#80539a]"><Building2 size={20} /></div>
+            <div className="relative overflow-hidden rounded-[2.5rem] border border-white bg-white p-3 shadow-2xl shadow-[#45205f]/15">
+              <img
+                src="/images/associacao.jpg"
+                alt="Registro da Associação das Donas de Casa do Bairro Caranã"
+                className="h-[420px] w-full rounded-[2rem] object-cover"
+                loading="eager"
+              />
+              <div className="px-3 pb-2 pt-4">
+                <p className="text-xs font-extrabold text-[#542477]">ASDCC / AJURICABA</p>
+                <p className="mt-1 text-[10px] text-[#8b7d90]">Associação e comunidade</p>
               </div>
             </div>
           </div>
