@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import { createFileRoute } from "@tanstack/react-router";
 import {
   ArrowRight, Menu, X, HeartHandshake, Users, Megaphone,
@@ -6,15 +7,6 @@ import {
 } from "lucide-react";
 
 export const Route = createFileRoute("/")({ component: Index });
-
-const news = [
-  {
-    tag: "VISITA TÉCNICA",
-    date: "10 de julho",
-    title: "Acompanhamento das obras do Residencial Esperança",
-    text: "A presidente da associação esteve na área do empreendimento com equipes da Caixa, da construtora e representantes técnicos e sociais para acompanhar as obras e planejar ações para a comunidade.",
-  },
-];
 
 const values = [
   { icon: HeartHandshake, title: "Compromisso social", text: "Atuação voltada à promoção da moradia digna e à melhoria da qualidade de vida das famílias." },
@@ -48,6 +40,32 @@ function SectionTitle({ eyebrow, title, text }: { eyebrow: string; title: string
 
 function Index() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [newsItems, setNewsItems] = useState<any[]>([]);
+  const [projectItems, setProjectItems] = useState<any[]>([]);
+  const [galleryItems, setGalleryItems] = useState<any[]>([]);
+  const [documentItems, setDocumentItems] = useState<any[]>([]);
+
+  useEffect(() => {
+    let active = true;
+    async function loadPublicContent() {
+      const [newsResult, projectsResult, galleryResult, documentsResult] = await Promise.all([
+        supabase.from("news").select("id,title,summary,content,cover_image,published_at,created_at").eq("status", "published").order("published_at", { ascending: false }).limit(6),
+        supabase.from("projects").select("id,title,description,category,cover_image,created_at").eq("status", "published").order("created_at", { ascending: false }),
+        supabase.from("gallery").select("id,title,description,image_url,album,created_at").eq("is_published", true).order("created_at", { ascending: false }).limit(12),
+        supabase.from("documents").select("id,title,description,file_url,category,created_at").eq("is_public", true).order("created_at", { ascending: false }),
+      ]);
+      if (!active) return;
+      const [news, projects, gallery, documents] = await Promise.all([
+        Promise.all((newsResult.data ?? []).map(async (item: any) => ({ ...item, imageUrl: item.cover_image ? (await supabase.storage.from("asdcc-imagens").createSignedUrl(item.cover_image, 3600)).data?.signedUrl : null }))),
+        Promise.all((projectsResult.data ?? []).map(async (item: any) => ({ ...item, imageUrl: item.cover_image ? (await supabase.storage.from("asdcc-imagens").createSignedUrl(item.cover_image, 3600)).data?.signedUrl : null }))),
+        Promise.all((galleryResult.data ?? []).map(async (item: any) => ({ ...item, imageUrl: (await supabase.storage.from("asdcc-imagens").createSignedUrl(item.image_url, 3600)).data?.signedUrl }))),
+        Promise.all((documentsResult.data ?? []).map(async (item: any) => ({ ...item, fileUrl: (await supabase.storage.from("asdcc-documentos").createSignedUrl(item.file_url, 3600)).data?.signedUrl }))),
+      ]);
+      if (active) { setNewsItems(news); setProjectItems(projects); setGalleryItems(gallery); setDocumentItems(documents); }
+    }
+    loadPublicContent().catch((error) => console.error("Erro ao carregar conteúdo público:", error));
+    return () => { active = false; };
+  }, []);
   const close = () => setMenuOpen(false);
   const links = [
     ["Início", "#inicio"], ["A associação", "#sobre"], ["Conquistas", "#conquistas"],
@@ -150,6 +168,7 @@ function Index() {
         <div className="mx-auto grid max-w-7xl gap-12 px-5 md:grid-cols-[.9fr_1.1fr] md:items-center md:px-8">
           <div><p className="text-xs font-extrabold tracking-[.2em] text-[#e7c979]">ALÉM DA MORADIA</p><h2 className="mt-4 text-3xl font-black leading-tight md:text-4xl">Projetos sociais e participação comunitária.</h2><p className="mt-5 max-w-lg leading-8 text-white/70">O trabalho no Residencial Esperança também envolve planejamento de ações junto à comunidade, fortalecendo a cidadania, a educação ambiental e as oportunidades para a juventude.</p></div>
           <div className="grid gap-4 sm:grid-cols-2">
+            {projectItems.map(item => <article key={item.id} className="rounded-2xl border border-white/15 bg-white/[.07] p-6 sm:col-span-2">{item.imageUrl && <img src={item.imageUrl} alt={item.title} className="mb-4 max-h-64 w-full rounded-xl object-cover" />}<p className="text-[10px] font-bold tracking-widest text-[#e7c979]">{item.category || "PROJETO"}</p><h3 className="mt-2 text-lg font-extrabold">{item.title}</h3><p className="mt-2 text-sm leading-6 text-white/65">{item.description}</p></article>)}
             <div className="rounded-2xl border border-white/15 bg-white/[.07] p-6"><Leaf size={25} className="text-[#e7c979]" /><h3 className="mt-5 font-extrabold">Guarda Mirim</h3><p className="mt-2 text-sm leading-6 text-white/65">Projeto Ambiental Estadual Guarda Mirim – Cidadão e Ambiental, citado nas ações planejadas para o residencial.</p></div>
             <div className="rounded-2xl border border-white/15 bg-white/[.07] p-6"><Users size={25} className="text-[#e7c979]" /><h3 className="mt-5 font-extrabold">Ações comunitárias</h3><p className="mt-2 text-sm leading-6 text-white/65">Planejamento de atividades com atenção à juventude, à cidadania e à participação das famílias.</p></div>
           </div>
@@ -158,14 +177,14 @@ function Index() {
 
       <section id="noticias" className="mx-auto max-w-7xl px-5 py-20 md:px-8 md:py-28">
         <div className="flex flex-wrap items-end justify-between gap-5"><SectionTitle eyebrow="FIQUE POR DENTRO" title="Notícias e acontecimentos" text="Acompanhe visitas técnicas, atividades, comunicados e novidades da associação." /><span className="text-xs font-semibold text-[#9a8da0]">Publicações institucionais</span></div>
-        <div className="mt-10 grid gap-5 md:grid-cols-2">{news.map(item => <article key={item.title} className="overflow-hidden rounded-3xl border border-[#eee5ef] bg-white shadow-sm"><div className="flex h-44 items-center justify-center bg-gradient-to-br from-[#eee3f1] to-[#f9f3e6]"><div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white text-[#80539a] shadow-sm"><Megaphone size={28} /></div></div><div className="p-7"><div className="flex flex-wrap items-center justify-between gap-3"><span className="rounded-full bg-[#f5edf6] px-3 py-1 text-[10px] font-black tracking-widest text-[#80539a]">{item.tag}</span><span className="text-[11px] text-[#9a8da0]">{item.date}</span></div><h3 className="mt-5 text-xl font-extrabold leading-snug text-[#4c2869]">{item.title}</h3><p className="mt-3 text-sm leading-7 text-[#817586]">{item.text}</p></div></article>)}</div>
+        <div className="mt-10 grid gap-5 md:grid-cols-2">{newsItems.length === 0 ? <p className="col-span-2 rounded-2xl bg-[#f8f4f9] p-8 text-sm text-[#817586]">As notícias publicadas pela associação aparecerão aqui.</p> : newsItems.map(item => <article key={item.id} className="overflow-hidden rounded-3xl border border-[#eee5ef] bg-white shadow-sm">{item.imageUrl ? <img src={item.imageUrl} alt={item.title} className="h-48 w-full object-cover" /> : <div className="flex h-44 items-center justify-center bg-gradient-to-br from-[#eee3f1] to-[#f9f3e6]"><div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white text-[#80539a] shadow-sm"><Megaphone size={28} /></div></div>}<div className="p-7"><span className="rounded-full bg-[#f5edf6] px-3 py-1 text-[10px] font-black tracking-widest text-[#80539a]">NOTÍCIA</span><span className="ml-3 text-[11px] text-[#9a8da0]">{item.published_at ? new Date(item.published_at).toLocaleDateString("pt-BR") : ""}</span><h3 className="mt-5 text-xl font-extrabold leading-snug text-[#4c2869]">{item.title}</h3><p className="mt-3 text-sm leading-7 text-[#817586]">{item.summary || item.content}</p></div></article>)}</div>
       </section>
 
       <section id="galeria" className="bg-[#f7f2f8] py-20 md:py-24">
         <div className="mx-auto max-w-7xl px-5 md:px-8">
           <div className="flex flex-wrap items-end justify-between gap-5"><SectionTitle eyebrow="REGISTROS DA NOSSA CAMINHADA" title="Galeria de fotos" text="Um espaço para reunir registros de visitas, reuniões, eventos, projetos e momentos importantes da associação." /><Images className="text-[#9b7eaa]" size={34} /></div>
           <div className="mt-10 grid gap-4 sm:grid-cols-2 md:grid-cols-3">
-            {["Projetos habitacionais", "Visitas técnicas", "Ações e encontros"].map((label, index) => <div key={label} className="flex aspect-[5/4] flex-col items-center justify-center rounded-3xl border border-dashed border-[#cbb8d2] bg-white/70 p-6 text-center"><div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#f1e8f4] text-[#80539a]">{index === 0 ? <Home size={25} /> : index === 1 ? <Building2 size={25} /> : <Users size={25} />}</div><p className="mt-4 font-extrabold text-[#542477]">{label}</p><p className="mt-2 text-xs text-[#9a8da0]">Fotos oficiais serão adicionadas aqui</p></div>)}
+            {galleryItems.length === 0 ? <p className="col-span-3 rounded-2xl bg-white p-8 text-center text-sm text-[#817586]">As fotos publicadas pela associação aparecerão aqui.</p> : galleryItems.map(item => <figure key={item.id} className="overflow-hidden rounded-3xl bg-white shadow-sm"><img src={item.imageUrl} alt={item.title || "Registro da ASDCC"} className="aspect-[5/4] w-full object-cover" /><figcaption className="p-4"><p className="font-bold text-[#542477]">{item.title || item.album || "Registro da associação"}</p>{item.description && <p className="mt-1 text-xs text-[#817586]">{item.description}</p>}</figcaption></figure>)}
           </div>
         </div>
       </section>
@@ -173,7 +192,7 @@ function Index() {
       <section id="transparencia" className="mx-auto max-w-7xl px-5 py-16 md:px-8">
         <div className="flex flex-col gap-5 rounded-3xl border border-[#eee5ef] bg-white p-8 shadow-sm md:flex-row md:items-center md:justify-between">
           <div className="flex items-start gap-4"><div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#f4edf6] text-[#80539a]"><FileText size={23} /></div><div><h2 className="text-xl font-black text-[#432255]">Transparência e documentos</h2><p className="mt-2 max-w-2xl text-sm leading-6 text-[#817586]">Em breve, este espaço poderá reunir estatuto, atas, relatórios e outros documentos institucionais disponibilizados pela associação.</p></div></div>
-          <span className="shrink-0 rounded-full bg-[#fbf4df] px-4 py-2 text-xs font-bold text-[#92702f]">Seção em preparação</span>
+          <div className="shrink-0 space-y-2">{documentItems.length === 0 ? <span className="rounded-full bg-[#fbf4df] px-4 py-2 text-xs font-bold text-[#92702f]">Documentos em preparação</span> : documentItems.map(item => <a key={item.id} href={item.fileUrl || "#"} target="_blank" rel="noreferrer" className="block rounded-xl border border-[#eadfca] px-4 py-3 text-sm font-bold text-[#542477] hover:bg-[#fbf7ef]">{item.title} ↗</a>)}</div>
         </div>
       </section>
 
