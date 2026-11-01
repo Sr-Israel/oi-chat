@@ -18,9 +18,7 @@ const values = [
 function Brand({ light = false }: { light?: boolean }) {
   return (
     <a href="#inicio" className="flex items-center gap-3">
-      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border-[3px] border-[#d9b85f] bg-[#542477] text-white shadow-sm">
-        <span className="text-[13px] font-black tracking-tight">ASDCC</span>
-      </div>
+      <img src="/images/logo.png" alt="Logo da ASDCC" className="h-12 w-12 shrink-0 object-contain" />
       <span className={`max-w-[230px] text-sm font-extrabold leading-tight tracking-tight ${light ? "text-white" : "text-[#45205f]"}`}>
         ASSOCIAÇÃO DAS DONAS DE CASA
         <span className={`mt-1 block text-[10px] font-semibold tracking-[.16em] ${light ? "text-[#e7ce8c]" : "text-[#9a7937]"}`}>CARANÃ • RESIDENCIAL AJURICABA</span>
@@ -149,12 +147,14 @@ function Index() {
             <article className="rounded-3xl border border-[#eadfca] bg-white p-8 shadow-sm">
               <div className="flex items-center justify-between"><span className="rounded-full bg-[#f4edf6] px-3 py-1 text-[10px] font-black tracking-widest text-[#80539a]">CONQUISTA • 2015</span><Home className="text-[#a17b39]" size={24} /></div>
               <h3 className="mt-6 text-2xl font-black text-[#432255]">Residencial Ajuricaba</h3>
+              <img src="/images/casa1.jpg" alt="Moradias do Residencial Ajuricaba" loading="lazy" className="mt-5 h-56 w-full rounded-2xl object-cover" />
               <p className="mt-3 text-sm leading-7 text-[#817586]">Em 2015, a associação participou da conquista e entrega de 200 unidades habitacionais por meio do programa Minha Casa, Minha Vida – Entidades, um marco importante em sua trajetória.</p>
               <div className="mt-8 flex items-end gap-3"><span className="text-5xl font-black text-[#542477]">200</span><span className="pb-1 text-sm font-semibold text-[#8b7d90]">unidades habitacionais entregues</span></div>
             </article>
             <article className="rounded-3xl border border-[#eadfca] bg-white p-8 shadow-sm">
               <div className="flex items-center justify-between"><span className="rounded-full bg-[#fbf4df] px-3 py-1 text-[10px] font-black tracking-widest text-[#92702f]">NOVO EMPREENDIMENTO</span><Building2 className="text-[#a17b39]" size={24} /></div>
               <h3 className="mt-6 text-2xl font-black text-[#432255]">Residencial Esperança</h3>
+              <img src="/images/casa.png" alt="Imagem do novo empreendimento Residencial Esperança" loading="lazy" className="mt-5 h-56 w-full rounded-2xl object-cover" />
               <p className="mt-3 text-sm leading-7 text-[#817586]">A associação celebrou a assinatura do contrato do Minha Casa, Minha Vida – Entidades para um novo empreendimento com 435 moradias. A etapa marca o avanço do projeto em direção à construção das casas esperadas pelas famílias.</p>
               <div className="mt-8 flex items-end gap-3"><span className="text-5xl font-black text-[#a17b35]">435</span><span className="pb-1 text-sm font-semibold text-[#8b7d90]">moradias previstas no empreendimento</span></div>
             </article>
