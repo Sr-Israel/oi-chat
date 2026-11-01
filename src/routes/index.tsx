@@ -159,7 +159,6 @@ function Index() {
               <div className="mt-8 flex items-end gap-3"><span className="text-5xl font-black text-[#a17b35]">435</span><span className="pb-1 text-sm font-semibold text-[#8b7d90]">moradias previstas no empreendimento</span></div>
             </article>
           </div>
-          <p className="mt-5 text-xs leading-5 text-[#93869a]">Os números e informações desta página foram organizados a partir dos relatos institucionais fornecidos. O andamento das obras será atualizado conforme novas informações oficiais.</p>
         </div>
       </section>
 
