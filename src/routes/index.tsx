@@ -21,7 +21,7 @@ function Brand({ light = false }: { light?: boolean }) {
       <img src="/images/logo.png" alt="Logo da ASDCC" className="h-12 w-12 shrink-0 object-contain" />
       <span className={`max-w-[230px] text-sm font-extrabold leading-tight tracking-tight ${light ? "text-white" : "text-[#45205f]"}`}>
         ASSOCIAÇÃO DAS DONAS DE CASA
-        <span className={`mt-1 block text-[10px] font-semibold tracking-[.16em] ${light ? "text-[#e7ce8c]" : "text-[#9a7937]"}`}>CARANÃ • RESIDENCIAL AJURICABA</span>
+        
       </span>
     </a>
   );
@@ -69,6 +69,24 @@ function Index() {
     loadPublicContent().catch((error) => console.error("Erro ao carregar conteúdo público:", error));
     return () => { active = false; };
   }, []);
+  useEffect(() => {
+    const selectors = ["#projects-carousel", "#news-carousel", "#gallery-carousel"];
+    const timer = window.setInterval(() => {
+      selectors.forEach((selector) => {
+        const carousel = document.querySelector<HTMLElement>(selector);
+        if (!carousel || carousel.matches(":hover")) return;
+        const maxScroll = carousel.scrollWidth - carousel.clientWidth;
+        if (maxScroll <= 0) return;
+        if (carousel.scrollLeft >= maxScroll - 8) {
+          carousel.scrollTo({ left: 0, behavior: "smooth" });
+        } else {
+          carousel.scrollBy({ left: Math.max(240, carousel.clientWidth * 0.75), behavior: "smooth" });
+        }
+      });
+    }, 3500);
+    return () => window.clearInterval(timer);
+  }, [newsItems, projectItems, galleryItems]);
+
   const close = () => setMenuOpen(false);
   const links = [
     ["Início", "#inicio"], ["A associação", "#sobre"], ["Conquistas", "#conquistas"],
@@ -134,7 +152,7 @@ function Index() {
             <div className="mt-7 rounded-2xl border border-[#eee5ef] bg-[#fbf7fc] p-5">
               <h3 className="text-sm font-extrabold text-[#542477]">Dados institucionais</h3>
               <div className="mt-3 space-y-2 text-sm leading-6 text-[#74697a]">
-                <p><strong className="text-[#4c2869]">CNPJ:</strong> 05.510.860/0001-99</p>
+                
                 <p><strong className="text-[#4c2869]">Endereço:</strong> Avenida João Liberato, 705, bairro Caranã, Boa Vista – RR</p>
                 <p><strong className="text-[#4c2869]">Presidente:</strong> Carla Cristina Rocha</p>
               </div>
@@ -144,7 +162,7 @@ function Index() {
         <div className="mt-14 grid gap-4 md:grid-cols-3">{values.map(({ icon: Icon, title, text }) => <article key={title} className="rounded-3xl border border-[#eee5ef] bg-white p-7 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"><div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#f4edf6] text-[#80539a]"><Icon size={23} /></div><h3 className="mt-6 text-xl font-extrabold text-[#4c2869]">{title}</h3><p className="mt-3 text-sm leading-7 text-[#817586]">{text}</p></article>)}</div>
       </section>
 
-      <section id="conquistas" className="bg-[#fbf7ef] py-20 md:py-24">
+      <section id="conquistas" className="bg-[#fbf7ef] py-14 md:py-18">
         <div className="mx-auto max-w-7xl px-5 md:px-8">
           <SectionTitle eyebrow="NOSSA HISTÓRIA" title="Conquistas que fazem parte da nossa caminhada." text="Cada empreendimento representa uma etapa importante na luta por moradia social e por mais dignidade para as famílias." />
           <div className="mt-12 grid gap-5 md:grid-cols-2">
@@ -166,7 +184,7 @@ function Index() {
         </div>
       </section>
 
-      <section id="projetos" className="bg-[#45205f] py-20 text-white md:py-24">
+      <section id="projetos" className="bg-[#45205f] py-14 text-white md:py-18">
         <div className="mx-auto max-w-7xl px-5 md:px-8">
           <div className="max-w-2xl"><p className="text-xs font-extrabold tracking-[.2em] text-[#e7c979]">ALÉM DA MORADIA</p><h2 className="mt-4 text-3xl font-black leading-tight md:text-4xl">Projetos sociais e participação comunitária.</h2><p className="mt-5 leading-8 text-white/70">O trabalho no Residencial Esperança também envolve planejamento de ações junto à comunidade, fortalecendo a cidadania, a educação ambiental e as oportunidades para a juventude.</p></div>
           {projectItems.length === 0 ? <p className="mt-10 rounded-2xl border border-white/15 bg-white/[.07] p-6 text-sm text-white/70">Os projetos cadastrados e publicados pela associação aparecerão aqui.</p> : <div id="projects-carousel" className="mt-10 flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
@@ -182,7 +200,7 @@ function Index() {
         {newsItems.length > 2 && <div className="mt-5 flex justify-center gap-2">{newsItems.slice(0, 4).map((item, index) => <button key={item.id} aria-label={`Ir para notícia ${index + 1}`} onClick={() => document.getElementById(`news-slide-${index}`)?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "start" })} className="h-2 w-2 rounded-full bg-[#542477]/25 transition hover:bg-[#542477]" />)}</div>}
       </section>
 
-      <section id="galeria" className="bg-[#f7f2f8] py-20 md:py-24">
+      <section id="galeria" className="bg-[#f7f2f8] py-14 md:py-18">
         <div className="mx-auto max-w-7xl px-5 md:px-8">
           <div className="flex flex-wrap items-end justify-between gap-5"><SectionTitle eyebrow="REGISTROS DA NOSSA CAMINHADA" title="Galeria de fotos" text="Um espaço para reunir registros de visitas, reuniões, eventos, projetos e momentos importantes da associação." /><button type="button" onClick={() => setShowAllGallery(true)} className="inline-flex items-center rounded-full border border-[#d7c4dc] px-5 py-3 text-xs font-extrabold text-[#542477] transition hover:bg-white">Ver todas as fotos <ArrowRight size={15} className="ml-2" /></button></div>
           {galleryItems.length === 0 ? <p className="mt-10 rounded-2xl bg-white p-8 text-center text-sm text-[#817586]">As fotos publicadas pela associação aparecerão aqui.</p> : <div id="gallery-carousel" className="mt-8 flex snap-x snap-mandatory gap-2 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
@@ -194,14 +212,14 @@ function Index() {
         </div>
       </section>
 
-      <section id="transparencia" className="mx-auto max-w-7xl px-5 py-16 md:px-8">
+      <section id="transparencia" className="mx-auto max-w-7xl px-5 py-12 md:px-8">
         <div className="rounded-3xl border border-[#eee5ef] bg-white p-8 shadow-sm">
           <div className="flex items-center gap-4"><div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#f4edf6] text-[#80539a]"><FileText size={23} /></div><h2 className="text-xl font-black text-[#432255]">Transparência e documentos</h2></div>
           <div className="mt-6 flex flex-wrap gap-3">{documentItems.length === 0 ? <span className="rounded-full bg-[#fbf4df] px-4 py-2 text-xs font-bold text-[#92702f]">Nenhum documento publicado</span> : documentItems.map(item => <a key={item.id} href={item.fileUrl || "#"} target="_blank" rel="noreferrer" className="rounded-xl border border-[#eadfca] px-4 py-3 text-sm font-bold text-[#542477] hover:bg-[#fbf7ef]">{item.title} ↗</a>)}</div>
         </div>
       </section>
 
-      <section className="bg-[#fbf6ed] py-16">
+      <section className="bg-[#fbf6ed] py-12">
         <div className="mx-auto flex max-w-7xl flex-col items-center gap-5 px-5 text-center md:px-8"><div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#eadfca] text-[#8e6a32]"><HeartHandshake size={26} /></div><p className="text-xs font-extrabold tracking-[.2em] text-[#a17b39]">NOSSO COMPROMISSO</p><h2 className="max-w-2xl text-3xl font-black leading-tight text-[#432255] md:text-4xl">Moradia digna transforma histórias e abre caminhos.</h2><p className="max-w-xl leading-7 text-[#817586]">Seguimos trabalhando em parceria para que mais famílias tenham acesso a oportunidades e a um novo começo.</p><a href="https://wa.me/5595991508831" target="_blank" rel="noreferrer" className="mt-2 inline-flex items-center rounded-full bg-[#542477] px-7 py-4 text-sm font-extrabold text-white hover:bg-[#68408a]">Entre em contato <ArrowRight size={16} className="ml-2" /></a></div>
       </section>
 
@@ -213,7 +231,8 @@ function Index() {
         <div className="mx-auto grid max-w-7xl gap-12 px-5 py-16 md:grid-cols-[1.2fr_.8fr_1fr] md:px-8">
           <div><Brand light /><p className="mt-6 max-w-sm text-sm leading-7 text-white/60">Uma trajetória de trabalho social, organização comunitária e compromisso com a moradia digna em Boa Vista, Roraima.</p></div>
           <div><h3 className="font-extrabold">Navegação</h3><div className="mt-5 space-y-3">{links.map(([label, href]) => <a key={href} href={href} className="block text-sm text-white/60 transition hover:text-white">{label}</a>)}</div></div>
-          <div><h3 className="font-extrabold">Fale com a associação</h3><div className="mt-5 space-y-4 text-sm text-white/65"><p className="flex items-start gap-3"><MapPin size={17} className="mt-0.5 shrink-0 text-[#d6b96d]" /> Avenida João Liberato, 705, bairro Caranã, Boa Vista – RR</p><p className="flex items-center gap-3"><Phone size={17} className="text-[#d6b96d]" /> Telefone não informado</p><p className="flex items-center gap-3"><Mail size={17} className="text-[#d6b96d]" /> E-mail não informado</p></div></div>
+          <div><h3 className="font-extrabold">Fale com a associação</h3><div className="mt-5 space-y-4 text-sm text-white/65"><p className="flex items-start gap-3"><MapPin size={17} className="mt-0.5 shrink-0 text-[#d6b96d]" /> Avenida João Liberato, 705, bairro Caranã, Boa Vista – RR</p>
+          <p className="flex items-center gap-3"><FileText size={17} className="text-[#d6b96d]" /> CNPJ: 05.510.860/0001-99</p><p className="flex items-center gap-3"><Phone size={17} className="text-[#d6b96d]" /> Telefone não informado</p><p className="flex items-center gap-3"><Mail size={17} className="text-[#d6b96d]" /> E-mail não informado</p></div></div>
         </div>
         <div className="border-t border-white/10 px-5 py-5 text-center text-xs text-white/40">© {new Date().getFullYear()} ASDCC / Ajuricaba. Todos os direitos reservados.</div>
       </footer>
