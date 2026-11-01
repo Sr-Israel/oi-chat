@@ -74,7 +74,7 @@ function AdminPage() {
     setMessage("");
   }
 
-  function startNew() { setEditing(null); setForm({ ...emptyForm }); setFile(null); setNewsFiles([]); setNewsFiles([]); setMessage(""); }
+  function startNew() { setEditing(null); setForm({ ...emptyForm }); setFile(null); setNewsFiles([]); setMessage(""); }
 
   async function save(event: FormEvent) {
     event.preventDefault();
