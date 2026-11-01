@@ -2,119 +2,193 @@ import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import {
   ArrowRight, Menu, X, HeartHandshake, Users, CalendarDays, Megaphone,
-  MapPin, Phone, Mail, Facebook, Instagram, ChevronRight, HandHeart,
-  ShieldCheck, BookOpen, Clock3, ExternalLink
+  MapPin, Phone, Mail, Instagram, ChevronRight, HandHeart, ShieldCheck,
+  BookOpen, Home, Building2, Leaf, Images, FileText, Landmark, ExternalLink
 } from "lucide-react";
 
 export const Route = createFileRoute("/")({ component: Index });
 
 const news = [
-  { tag: "COMUNICADO", date: "12 de outubro de 2026", title: "A associação está preparando novas ações para a comunidade", text: "Acompanhe por aqui os próximos comunicados, reuniões e atividades da nossa associação." },
-  { tag: "EVENTO", date: "05 de outubro de 2026", title: "Encontro de integração das associadas", text: "Um momento de união, troca de experiências e fortalecimento dos nossos laços." },
-  { tag: "INFORMAÇÃO", date: "28 de setembro de 2026", title: "Conheça os canais oficiais de atendimento", text: "Estamos disponíveis para ouvir você e orientar sobre as atividades da associação." },
+  {
+    tag: "VISITA TÉCNICA",
+    date: "10 de julho",
+    title: "Acompanhamento das obras do Residencial Esperança",
+    text: "A presidente da associação esteve na área do empreendimento com equipes da Caixa, da construtora e representantes técnicos e sociais para acompanhar as obras e planejar ações para a comunidade.",
+  },
 ];
 
 const values = [
-  { icon: HeartHandshake, title: "União", text: "Fortalecemos os laços entre as associadas e construímos uma comunidade mais unida." },
-  { icon: ShieldCheck, title: "Respeito", text: "Acolhimento, dignidade e respeito são a base de todas as nossas ações." },
-  { icon: HandHeart, title: "Solidariedade", text: "Trabalhamos juntas para apoiar, incentivar e transformar realidades." },
+  { icon: HeartHandshake, title: "Compromisso social", text: "Atuação voltada à promoção da moradia digna e à melhoria da qualidade de vida das famílias." },
+  { icon: Users, title: "Participação comunitária", text: "Diálogo, organização e trabalho conjunto com as famílias e parceiros." },
+  { icon: ShieldCheck, title: "Responsabilidade", text: "Compromisso com as iniciativas e com a comunidade que a associação representa." },
 ];
 
-function BrandMark() {
-  return <div className="brand-mark"><div className="brand-mark-inner"><HeartHandshake size={30} strokeWidth={1.7}/></div></div>;
+function Brand({ light = false }: { light?: boolean }) {
+  return (
+    <a href="#inicio" className="flex items-center gap-3">
+      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border-[3px] border-[#d9b85f] bg-[#542477] text-white shadow-sm">
+        <span className="text-[13px] font-black tracking-tight">ASDCC</span>
+      </div>
+      <span className={`max-w-[230px] text-sm font-extrabold leading-tight tracking-tight ${light ? "text-white" : "text-[#45205f]"}`}>
+        ASSOCIAÇÃO DAS DONAS DE CASA
+        <span className={`mt-1 block text-[10px] font-semibold tracking-[.16em] ${light ? "text-[#e7ce8c]" : "text-[#9a7937]"}`}>CARANÃ • RESIDENCIAL AJURICABA</span>
+      </span>
+    </a>
+  );
+}
+
+function SectionTitle({ eyebrow, title, text }: { eyebrow: string; title: string; text?: string }) {
+  return (
+    <div className="max-w-2xl">
+      <p className="text-xs font-extrabold tracking-[.2em] text-[#a17b39]">{eyebrow}</p>
+      <h2 className="mt-3 text-3xl font-black leading-tight tracking-tight text-[#432255] md:text-4xl">{title}</h2>
+      {text && <p className="mt-4 leading-7 text-[#74697a]">{text}</p>}
+    </div>
+  );
 }
 
 function Index() {
   const [menuOpen, setMenuOpen] = useState(false);
   const close = () => setMenuOpen(false);
-  const links = [["Início", "#inicio"], ["A associação", "#sobre"], ["Atividades", "#atividades"], ["Notícias", "#noticias"], ["Contato", "#contato"]];
+  const links = [
+    ["Início", "#inicio"], ["A associação", "#sobre"], ["Conquistas", "#conquistas"],
+    ["Projetos", "#projetos"], ["Notícias", "#noticias"], ["Galeria", "#galeria"], ["Contato", "#contato"],
+  ];
+
   return (
-    <main className="min-h-screen bg-[#fffdf9] text-[#30243d]">
-      <div className="bg-[#4c2869] px-5 py-2 text-center text-xs font-medium tracking-wide text-white/90">
-        Associação das Donas de Casa de AjuRicaba <span className="mx-2 text-[#e9c66b]">•</span> Juntas somos mais fortes
+    <main className="min-h-screen bg-[#fffefa] text-[#30243d]">
+      <div className="bg-[#45205f] px-5 py-2 text-center text-[11px] font-semibold tracking-wide text-white/90">
+        ASSOCIAÇÃO DAS DONAS DE CASA DO BAIRRO CARANÃ <span className="mx-2 text-[#e2c36f]">•</span> ASDCC / AJURICABA
       </div>
-      <header className="sticky top-0 z-40 border-b border-[#eee6ef] bg-[#fffdf9]/95 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-3 md:px-8">
-          <a href="#inicio" className="flex items-center gap-3">
-            <BrandMark/>
-            <span className="max-w-[220px] text-sm font-extrabold leading-tight tracking-tight text-[#4c2869] md:text-base">ASDCC AJURICABA<span className="mt-1 block text-[10px] font-semibold tracking-[.16em] text-[#a17b39]">ASSOCIAÇÃO COMUNITÁRIA</span></span>
-          </a>
-          <nav className="hidden items-center gap-7 md:flex">
-            {links.map(([label, href]) => <a key={href} href={href} className="text-sm font-semibold text-[#665b6d] transition hover:text-[#8b5aa4]">{label}</a>)}
+
+      <header className="sticky top-0 z-40 border-b border-[#eee7ef] bg-[#fffefa]/95 backdrop-blur">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-3 md:px-8">
+          <Brand />
+          <nav className="hidden items-center gap-5 lg:flex">
+            {links.map(([label, href]) => <a key={href} href={href} className="text-xs font-bold text-[#665b6d] transition hover:text-[#80539a]">{label}</a>)}
           </nav>
-          <a href="#contato" className="hidden rounded-full bg-[#4c2869] px-5 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-[#633b80] md:inline-flex">Fale com a associação <ArrowRight size={16} className="ml-2"/></a>
-          <button aria-label="Abrir menu" onClick={() => setMenuOpen(!menuOpen)} className="rounded-xl p-2 text-[#4c2869] md:hidden">{menuOpen ? <X/> : <Menu/>}</button>
+          <a href="#contato" className="hidden items-center rounded-full bg-[#542477] px-5 py-3 text-xs font-bold text-white transition hover:bg-[#68408a] md:inline-flex">Fale com a associação <ArrowRight size={15} className="ml-2" /></a>
+          <button aria-label="Abrir menu" onClick={() => setMenuOpen(!menuOpen)} className="rounded-xl p-2 text-[#542477] lg:hidden">{menuOpen ? <X /> : <Menu />}</button>
         </div>
-        {menuOpen && <nav className="border-t border-[#eee6ef] bg-white px-5 py-3 md:hidden">{links.map(([label, href]) => <a key={href} href={href} onClick={close} className="block rounded-lg px-3 py-3 text-sm font-semibold text-[#4c2869] hover:bg-[#f7f1f8]">{label}</a>)}</nav>}
+        {menuOpen && <nav className="border-t border-[#eee7ef] bg-white px-5 py-3 lg:hidden">{links.map(([label, href]) => <a key={href} href={href} onClick={close} className="block rounded-lg px-3 py-3 text-sm font-semibold text-[#542477] hover:bg-[#f7f1f8]">{label}</a>)}</nav>}
       </header>
 
-      <section id="inicio" className="relative overflow-hidden bg-[#f5edf6]">
-        <div className="absolute -right-24 -top-28 h-96 w-96 rounded-full border-[1px] border-[#d9c4df] opacity-70"/>
-        <div className="absolute -right-10 -top-14 h-72 w-72 rounded-full border border-[#d9c4df] opacity-70"/>
-        <div className="mx-auto grid max-w-7xl items-center gap-12 px-5 py-16 md:grid-cols-[1.05fr_.95fr] md:px-8 md:py-24">
-          <div className="relative z-10">
-            <span className="inline-flex items-center gap-2 rounded-full border border-[#dfcce4] bg-white/70 px-4 py-2 text-[11px] font-extrabold tracking-[.17em] text-[#80539a]"><span className="h-2 w-2 rounded-full bg-[#c79c43]"/> ACOLHIMENTO • UNIÃO • COMUNIDADE</span>
-            <h1 className="mt-7 max-w-2xl text-4xl font-black leading-[1.08] tracking-tight text-[#432255] md:text-6xl">Uma comunidade mais forte começa com <span className="text-[#a77b35]">mulheres unidas.</span></h1>
-            <p className="mt-6 max-w-xl text-base leading-8 text-[#6f6274] md:text-lg">A Associação das Donas de Casa de Ajuricaba trabalha para fortalecer vínculos, valorizar mulheres e promover iniciativas que fazem a diferença na comunidade.</p>
+      <section id="inicio" className="relative isolate overflow-hidden bg-[#f5eff7]">
+        <div className="absolute -right-24 -top-24 -z-10 h-[520px] w-[520px] rounded-full border border-[#ddcce3]" />
+        <div className="absolute -right-8 top-0 -z-10 h-[390px] w-[390px] rounded-full border border-[#ddcce3]" />
+        <div className="mx-auto grid max-w-7xl items-center gap-12 px-5 py-16 md:grid-cols-[1.1fr_.9fr] md:px-8 md:py-24">
+          <div>
+            <span className="inline-flex items-center gap-2 rounded-full border border-[#dfcce4] bg-white/80 px-4 py-2 text-[10px] font-extrabold tracking-[.16em] text-[#80539a]"><span className="h-2 w-2 rounded-full bg-[#c79c43]" /> MORADIA DIGNA • CIDADANIA • COMUNIDADE</span>
+            <h1 className="mt-7 max-w-2xl text-4xl font-black leading-[1.08] tracking-tight text-[#432255] md:text-6xl">Trabalhando por um futuro com <span className="text-[#a77b35]">mais dignidade e moradia.</span></h1>
+            <p className="mt-6 max-w-xl text-base leading-8 text-[#6f6274] md:text-lg">Conheça a trajetória da Associação das Donas de Casa do Bairro Caranã / Residencial Ajuricaba e o trabalho desenvolvido em defesa da moradia social em Boa Vista, Roraima.</p>
             <div className="mt-9 flex flex-wrap gap-3">
-              <a href="#sobre" className="inline-flex items-center rounded-full bg-[#4c2869] px-6 py-4 text-sm font-bold text-white shadow-lg shadow-[#4c2869]/15 transition hover:-translate-y-0.5 hover:bg-[#633b80]">Conheça a associação <ArrowRight size={17} className="ml-2"/></a>
-              <a href="#noticias" className="inline-flex items-center rounded-full border border-[#d7c4dc] bg-white/70 px-6 py-4 text-sm font-bold text-[#563269] transition hover:bg-white">Últimos comunicados</a>
+              <a href="#sobre" className="inline-flex items-center rounded-full bg-[#542477] px-6 py-4 text-sm font-bold text-white shadow-lg shadow-[#542477]/15 transition hover:-translate-y-0.5 hover:bg-[#68408a]">Conheça nossa história <ArrowRight size={17} className="ml-2" /></a>
+              <a href="#conquistas" className="inline-flex items-center rounded-full border border-[#d7c4dc] bg-white/80 px-6 py-4 text-sm font-bold text-[#563269] transition hover:bg-white">Nossas conquistas</a>
             </div>
-            <div className="mt-12 flex items-center gap-4 border-t border-[#dfd0e3] pt-6">
-              <div className="flex -space-x-2"><span className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-[#f5edf6] bg-[#d9bd8b] text-xs font-bold text-[#4c2869]">A</span><span className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-[#f5edf6] bg-[#c6a5d1] text-xs font-bold text-[#4c2869]">S</span><span className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-[#f5edf6] bg-[#ead6b3] text-xs font-bold text-[#4c2869]">D</span></div>
-              <p className="text-xs font-medium leading-5 text-[#786b7c]">Representatividade, participação<br/>e compromisso com a comunidade.</p>
+            <div className="mt-12 flex items-center gap-3 border-t border-[#dfd0e3] pt-6">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#e7d8eb] text-[#542477]"><HeartHandshake size={20} /></div>
+              <p className="text-xs font-medium leading-5 text-[#786b7c]">Uma história de organização comunitária,<br />persistência e compromisso com a moradia social.</p>
             </div>
           </div>
-          <div className="relative mx-auto flex w-full max-w-[470px] items-center justify-center">
-            <div className="absolute h-[360px] w-[360px] rounded-full bg-[#e8d8ec] md:h-[430px] md:w-[430px]"/>
-            <div className="absolute h-[315px] w-[315px] rounded-full border border-dashed border-[#b995c5] md:h-[380px] md:w-[380px]"/>
-            <div className="relative flex aspect-square w-[82%] flex-col items-center justify-center rounded-full border-[9px] border-[#e2c36e] bg-[#fffdf9] p-7 text-center shadow-2xl shadow-[#4c2869]/15 outline outline-[5px] outline-[#4c2869] outline-offset-[-18px]">
-              <BrandMark/>
-              <p className="mt-5 text-xs font-black tracking-[.2em] text-[#916c31]">ASSOCIAÇÃO DAS</p>
-              <p className="mt-1 text-2xl font-black leading-tight text-[#4c2869] md:text-3xl">DONAS DE CASA</p>
-              <p className="mt-2 text-sm font-bold tracking-[.18em] text-[#916c31]">AJURICABA</p>
-              <div className="mt-5 h-1 w-16 rounded-full bg-[#d4b15e]"/>
-              <p className="mt-4 max-w-[210px] text-xs leading-5 text-[#76677b]">Participação que fortalece. União que transforma.</p>
+
+          <div className="relative mx-auto w-full max-w-[470px]">
+            <div className="absolute inset-5 rounded-[2.5rem] bg-[#e6d7eb] rotate-3" />
+            <div className="relative overflow-hidden rounded-[2.5rem] border border-white bg-white p-5 shadow-2xl shadow-[#45205f]/15">
+              <div className="rounded-[2rem] bg-gradient-to-br from-[#542477] via-[#68408a] to-[#9875a8] p-8 text-white">
+                <div className="flex items-center justify-between"><span className="text-[10px] font-bold tracking-[.2em] text-[#ead79e]">NOSSA TRAJETÓRIA</span><Home size={24} className="text-[#ead79e]" /></div>
+                <div className="mt-14">
+                  <p className="text-6xl font-black tracking-tight">200</p>
+                  <p className="mt-2 text-sm font-semibold text-white/85">unidades habitacionais entregues</p>
+                  <div className="my-7 h-px bg-white/20" />
+                  <p className="text-5xl font-black tracking-tight text-[#f0d88f]">435</p>
+                  <p className="mt-2 text-sm font-semibold text-white/85">moradias previstas no Residencial Esperança</p>
+                </div>
+                <p className="mt-12 text-[10px] font-semibold tracking-[.14em] text-white/65">MORADIA SOCIAL • BOA VISTA / RR</p>
+              </div>
+              <div className="flex items-center justify-between gap-3 px-3 pb-1 pt-5">
+                <div><p className="text-xs font-extrabold text-[#542477]">ASDCC / AJURICABA</p><p className="mt-1 text-[10px] text-[#8b7d90]">Associação e comunidade</p></div>
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#f5eff7] text-[#80539a]"><Building2 size={20} /></div>
+              </div>
             </div>
-            <div className="absolute -bottom-2 -left-1 rounded-2xl border border-[#eadfc9] bg-white px-4 py-3 shadow-lg"><p className="text-[10px] font-bold uppercase tracking-widest text-[#9a773a]">Nossa força</p><p className="text-sm font-extrabold text-[#4c2869]">Está na união</p></div>
           </div>
         </div>
       </section>
 
       <section id="sobre" className="mx-auto max-w-7xl px-5 py-20 md:px-8 md:py-28">
-        <div className="grid gap-12 md:grid-cols-[.8fr_1.2fr] md:gap-20">
-          <div><p className="text-xs font-extrabold tracking-[.2em] text-[#a17b39]">QUEM SOMOS</p><h2 className="mt-4 text-3xl font-black leading-tight text-[#432255] md:text-4xl">Mais do que uma associação, uma rede de apoio.</h2></div>
-          <div><p className="text-lg leading-8 text-[#6e6273]">Somos uma organização comunitária que acredita na força da participação, no diálogo e na colaboração. Nosso propósito é criar oportunidades, apoiar iniciativas e dar voz às mulheres da nossa comunidade.</p><p className="mt-5 leading-7 text-[#817586]">Este espaço reúne informações sobre nossa história, ações, comunicados e formas de participar. Queremos manter cada associada e visitante bem informado.</p><a href="#contato" className="mt-7 inline-flex items-center text-sm font-extrabold text-[#80539a] hover:text-[#4c2869]">Saiba como participar <ChevronRight size={17}/></a></div>
+        <div className="grid gap-10 md:grid-cols-[.85fr_1.15fr] md:gap-20">
+          <SectionTitle eyebrow="QUEM SOMOS" title="Uma associação que trabalha pela moradia digna." />
+          <div>
+            <p className="text-lg leading-8 text-[#6e6273]">A Associação das Donas de Casa do Bairro Caranã / Residencial Ajuricaba (ASDCC) desenvolve um trabalho social voltado à luta pela moradia e à promoção de melhores condições de vida para famílias de Boa Vista, Roraima.</p>
+            <p className="mt-5 leading-7 text-[#817586]">Com uma trajetória construída por meio da organização comunitária e da parceria com diferentes instituições, a associação segue atuando para transformar o direito à moradia em oportunidades concretas para as famílias.</p>
+            <p className="mt-5 text-sm font-bold text-[#542477]">Presidente: Carla Cristina Rocha</p>
+          </div>
         </div>
-        <div className="mt-16 grid gap-4 md:grid-cols-3">{values.map(({icon: Icon,title,text})=><article key={title} className="rounded-3xl border border-[#eee5ef] bg-white p-7 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"><div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#f4edf6] text-[#80539a]"><Icon size={23}/></div><h3 className="mt-6 text-xl font-extrabold text-[#4c2869]">{title}</h3><p className="mt-3 text-sm leading-7 text-[#817586]">{text}</p></article>)}</div>
+        <div className="mt-14 grid gap-4 md:grid-cols-3">{values.map(({ icon: Icon, title, text }) => <article key={title} className="rounded-3xl border border-[#eee5ef] bg-white p-7 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"><div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#f4edf6] text-[#80539a]"><Icon size={23} /></div><h3 className="mt-6 text-xl font-extrabold text-[#4c2869]">{title}</h3><p className="mt-3 text-sm leading-7 text-[#817586]">{text}</p></article>)}</div>
       </section>
 
-      <section id="atividades" className="bg-[#4c2869] py-20 text-white md:py-24">
+      <section id="conquistas" className="bg-[#fbf7ef] py-20 md:py-24">
+        <div className="mx-auto max-w-7xl px-5 md:px-8">
+          <SectionTitle eyebrow="NOSSA HISTÓRIA" title="Conquistas que fazem parte da nossa caminhada." text="Cada empreendimento representa uma etapa importante na luta por moradia social e por mais dignidade para as famílias." />
+          <div className="mt-12 grid gap-5 md:grid-cols-2">
+            <article className="rounded-3xl border border-[#eadfca] bg-white p-8 shadow-sm">
+              <div className="flex items-center justify-between"><span className="rounded-full bg-[#f4edf6] px-3 py-1 text-[10px] font-black tracking-widest text-[#80539a]">CONQUISTA • 2015</span><Home className="text-[#a17b39]" size={24} /></div>
+              <h3 className="mt-6 text-2xl font-black text-[#432255]">Residencial Ajuricaba</h3>
+              <p className="mt-3 text-sm leading-7 text-[#817586]">Em 2015, a associação participou da conquista e entrega de 200 unidades habitacionais por meio do programa Minha Casa, Minha Vida – Entidades, um marco importante em sua trajetória.</p>
+              <div className="mt-8 flex items-end gap-3"><span className="text-5xl font-black text-[#542477]">200</span><span className="pb-1 text-sm font-semibold text-[#8b7d90]">unidades habitacionais entregues</span></div>
+            </article>
+            <article className="rounded-3xl border border-[#eadfca] bg-white p-8 shadow-sm">
+              <div className="flex items-center justify-between"><span className="rounded-full bg-[#fbf4df] px-3 py-1 text-[10px] font-black tracking-widest text-[#92702f]">NOVO EMPREENDIMENTO</span><Building2 className="text-[#a17b39]" size={24} /></div>
+              <h3 className="mt-6 text-2xl font-black text-[#432255]">Residencial Esperança</h3>
+              <p className="mt-3 text-sm leading-7 text-[#817586]">A associação celebrou a assinatura do contrato do Minha Casa, Minha Vida – Entidades para um novo empreendimento com 435 moradias. A etapa marca o avanço do projeto em direção à construção das casas esperadas pelas famílias.</p>
+              <div className="mt-8 flex items-end gap-3"><span className="text-5xl font-black text-[#a17b35]">435</span><span className="pb-1 text-sm font-semibold text-[#8b7d90]">moradias previstas no empreendimento</span></div>
+            </article>
+          </div>
+          <p className="mt-5 text-xs leading-5 text-[#93869a]">Os números e informações desta página foram organizados a partir dos relatos institucionais fornecidos. O andamento das obras será atualizado conforme novas informações oficiais.</p>
+        </div>
+      </section>
+
+      <section id="projetos" className="bg-[#45205f] py-20 text-white md:py-24">
         <div className="mx-auto grid max-w-7xl gap-12 px-5 md:grid-cols-[.9fr_1.1fr] md:items-center md:px-8">
-          <div><p className="text-xs font-extrabold tracking-[.2em] text-[#e7c979]">O QUE FAZEMOS</p><h2 className="mt-4 text-3xl font-black leading-tight md:text-4xl">Ações que aproximam e transformam.</h2><p className="mt-5 max-w-lg leading-8 text-white/70">A associação é feita de pessoas e iniciativas. Conheça algumas das frentes que podem fazer parte do nosso trabalho.</p><a href="#contato" className="mt-8 inline-flex items-center rounded-full bg-[#e4c36d] px-6 py-3.5 text-sm font-extrabold text-[#432255] transition hover:bg-[#f0d58c]">Quero saber mais <ArrowRight size={16} className="ml-2"/></a></div>
-          <div className="grid gap-3 sm:grid-cols-2">
-            {[{icon:Users,title:"Encontros e reuniões",text:"Espaços de diálogo, escuta e participação."},{icon:BookOpen,title:"Capacitação",text:"Compartilhamento de conhecimentos e experiências."},{icon:HandHeart,title:"Ações comunitárias",text:"Iniciativas de apoio e solidariedade."},{icon:Megaphone,title:"Informação",text:"Comunicados e orientações para as associadas."}].map(({icon:Icon,title,text})=><div key={title} className="rounded-2xl border border-white/15 bg-white/[.07] p-6"><Icon size={24} className="text-[#e7c979]"/><h3 className="mt-5 font-extrabold">{title}</h3><p className="mt-2 text-sm leading-6 text-white/65">{text}</p></div>)}
+          <div><p className="text-xs font-extrabold tracking-[.2em] text-[#e7c979]">ALÉM DA MORADIA</p><h2 className="mt-4 text-3xl font-black leading-tight md:text-4xl">Projetos sociais e participação comunitária.</h2><p className="mt-5 max-w-lg leading-8 text-white/70">O trabalho no Residencial Esperança também envolve planejamento de ações junto à comunidade, fortalecendo a cidadania, a educação ambiental e as oportunidades para a juventude.</p></div>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="rounded-2xl border border-white/15 bg-white/[.07] p-6"><Leaf size={25} className="text-[#e7c979]" /><h3 className="mt-5 font-extrabold">Guarda Mirim</h3><p className="mt-2 text-sm leading-6 text-white/65">Projeto Ambiental Estadual Guarda Mirim – Cidadão e Ambiental, citado nas ações planejadas para o residencial.</p></div>
+            <div className="rounded-2xl border border-white/15 bg-white/[.07] p-6"><Users size={25} className="text-[#e7c979]" /><h3 className="mt-5 font-extrabold">Ações comunitárias</h3><p className="mt-2 text-sm leading-6 text-white/65">Planejamento de atividades com atenção à juventude, à cidadania e à participação das famílias.</p></div>
           </div>
         </div>
       </section>
 
       <section id="noticias" className="mx-auto max-w-7xl px-5 py-20 md:px-8 md:py-28">
-        <div className="flex flex-wrap items-end justify-between gap-5"><div><p className="text-xs font-extrabold tracking-[.2em] text-[#a17b39]">FIQUE POR DENTRO</p><h2 className="mt-3 text-3xl font-black text-[#432255] md:text-4xl">Notícias e comunicados</h2><p className="mt-3 text-[#817586]">Acompanhe as novidades e informações da associação.</p></div><a href="#contato" className="inline-flex items-center text-sm font-extrabold text-[#80539a]">Ver todos os avisos <ArrowRight size={16} className="ml-2"/></a></div>
-        <div className="mt-10 grid gap-5 md:grid-cols-3">{news.map(item=><article key={item.title} className="overflow-hidden rounded-3xl border border-[#eee5ef] bg-white shadow-sm"><div className="flex h-36 items-center justify-center bg-[#f4edf6]"><div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white text-[#80539a] shadow-sm"><Megaphone size={28}/></div></div><div className="p-6"><div className="flex items-center justify-between gap-3"><span className="rounded-full bg-[#f5edf6] px-3 py-1 text-[10px] font-black tracking-widest text-[#80539a]">{item.tag}</span><span className="text-[11px] text-[#9a8da0]">{item.date}</span></div><h3 className="mt-5 text-lg font-extrabold leading-snug text-[#4c2869]">{item.title}</h3><p className="mt-3 text-sm leading-6 text-[#817586]">{item.text}</p><a href="#contato" className="mt-5 inline-flex items-center text-xs font-extrabold text-[#80539a]">Saiba mais <ChevronRight size={15}/></a></div></article>)}</div>
-        <p className="mt-5 text-center text-xs text-[#a79baa]">Conteúdo ilustrativo para demonstração do modelo de site.</p>
+        <div className="flex flex-wrap items-end justify-between gap-5"><SectionTitle eyebrow="FIQUE POR DENTRO" title="Notícias e acontecimentos" text="Acompanhe visitas técnicas, atividades, comunicados e novidades da associação." /><span className="text-xs font-semibold text-[#9a8da0]">Publicações institucionais</span></div>
+        <div className="mt-10 grid gap-5 md:grid-cols-2">{news.map(item => <article key={item.title} className="overflow-hidden rounded-3xl border border-[#eee5ef] bg-white shadow-sm"><div className="flex h-44 items-center justify-center bg-gradient-to-br from-[#eee3f1] to-[#f9f3e6]"><div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white text-[#80539a] shadow-sm"><Megaphone size={28} /></div></div><div className="p-7"><div className="flex flex-wrap items-center justify-between gap-3"><span className="rounded-full bg-[#f5edf6] px-3 py-1 text-[10px] font-black tracking-widest text-[#80539a]">{item.tag}</span><span className="text-[11px] text-[#9a8da0]">{item.date}</span></div><h3 className="mt-5 text-xl font-extrabold leading-snug text-[#4c2869]">{item.title}</h3><p className="mt-3 text-sm leading-7 text-[#817586]">{item.text}</p></div></article>)}</div>
       </section>
 
-      <section className="border-y border-[#eee5ef] bg-[#fbf6ed] py-16">
-        <div className="mx-auto flex max-w-7xl flex-col items-center gap-5 px-5 text-center md:px-8"><div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#eadfca] text-[#8e6a32]"><CalendarDays size={26}/></div><p className="text-xs font-extrabold tracking-[.2em] text-[#a17b39]">PARTICIPE</p><h2 className="max-w-2xl text-3xl font-black leading-tight text-[#432255] md:text-4xl">A associação também é sua. Faça parte!</h2><p className="max-w-xl leading-7 text-[#817586]">Entre em contato para conhecer as atividades, tirar dúvidas e descobrir como participar.</p><a href="#contato" className="mt-2 inline-flex items-center rounded-full bg-[#4c2869] px-7 py-4 text-sm font-extrabold text-white hover:bg-[#633b80]">Entre em contato <ArrowRight size={16} className="ml-2"/></a></div>
+      <section id="galeria" className="bg-[#f7f2f8] py-20 md:py-24">
+        <div className="mx-auto max-w-7xl px-5 md:px-8">
+          <div className="flex flex-wrap items-end justify-between gap-5"><SectionTitle eyebrow="REGISTROS DA NOSSA CAMINHADA" title="Galeria de fotos" text="Um espaço para reunir registros de visitas, reuniões, eventos, projetos e momentos importantes da associação." /><Images className="text-[#9b7eaa]" size={34} /></div>
+          <div className="mt-10 grid gap-4 sm:grid-cols-2 md:grid-cols-3">
+            {["Projetos habitacionais", "Visitas técnicas", "Ações e encontros"].map((label, index) => <div key={label} className="flex aspect-[5/4] flex-col items-center justify-center rounded-3xl border border-dashed border-[#cbb8d2] bg-white/70 p-6 text-center"><div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#f1e8f4] text-[#80539a]">{index === 0 ? <Home size={25} /> : index === 1 ? <Building2 size={25} /> : <Users size={25} />}</div><p className="mt-4 font-extrabold text-[#542477]">{label}</p><p className="mt-2 text-xs text-[#9a8da0]">Fotos oficiais serão adicionadas aqui</p></div>)}
+          </div>
+        </div>
+      </section>
+
+      <section id="transparencia" className="mx-auto max-w-7xl px-5 py-16 md:px-8">
+        <div className="flex flex-col gap-5 rounded-3xl border border-[#eee5ef] bg-white p-8 shadow-sm md:flex-row md:items-center md:justify-between">
+          <div className="flex items-start gap-4"><div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#f4edf6] text-[#80539a]"><FileText size={23} /></div><div><h2 className="text-xl font-black text-[#432255]">Transparência e documentos</h2><p className="mt-2 max-w-2xl text-sm leading-6 text-[#817586]">Em breve, este espaço poderá reunir estatuto, atas, relatórios e outros documentos institucionais disponibilizados pela associação.</p></div></div>
+          <span className="shrink-0 rounded-full bg-[#fbf4df] px-4 py-2 text-xs font-bold text-[#92702f]">Seção em preparação</span>
+        </div>
+      </section>
+
+      <section className="bg-[#fbf6ed] py-16">
+        <div className="mx-auto flex max-w-7xl flex-col items-center gap-5 px-5 text-center md:px-8"><div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#eadfca] text-[#8e6a32]"><HeartHandshake size={26} /></div><p className="text-xs font-extrabold tracking-[.2em] text-[#a17b39]">NOSSO COMPROMISSO</p><h2 className="max-w-2xl text-3xl font-black leading-tight text-[#432255] md:text-4xl">Moradia digna transforma histórias e abre caminhos.</h2><p className="max-w-xl leading-7 text-[#817586]">Seguimos trabalhando em parceria para que mais famílias tenham acesso a oportunidades e a um novo começo.</p><a href="#contato" className="mt-2 inline-flex items-center rounded-full bg-[#542477] px-7 py-4 text-sm font-extrabold text-white hover:bg-[#68408a]">Entre em contato <ArrowRight size={16} className="ml-2" /></a></div>
       </section>
 
       <footer id="contato" className="bg-[#281936] text-white">
         <div className="mx-auto grid max-w-7xl gap-12 px-5 py-16 md:grid-cols-[1.2fr_.8fr_1fr] md:px-8">
-          <div><div className="flex items-center gap-3"><BrandMark/><div><p className="font-extrabold">ASDCC AJURICABA</p><p className="mt-1 text-[10px] font-semibold tracking-[.16em] text-[#d6b96d]">ASSOCIAÇÃO COMUNITÁRIA</p></div></div><p className="mt-6 max-w-sm text-sm leading-7 text-white/60">Unindo pessoas, fortalecendo mulheres e construindo uma comunidade melhor.</p></div>
-          <div><h3 className="font-extrabold">Navegação</h3><div className="mt-5 space-y-3">{links.map(([label,href])=><a key={href} href={href} className="block text-sm text-white/60 transition hover:text-white">{label}</a>)}</div></div>
-          <div><h3 className="font-extrabold">Fale conosco</h3><div className="mt-5 space-y-4 text-sm text-white/65"><p className="flex items-center gap-3"><MapPin size={17} className="text-[#d6b96d]"/> Ajuricaba – informações de endereço</p><p className="flex items-center gap-3"><Phone size={17} className="text-[#d6b96d]"/> (00) 00000-0000</p><p className="flex items-center gap-3"><Mail size={17} className="text-[#d6b96d]"/> contato@associacao.org.br</p></div><p className="mt-5 text-xs text-white/40">Dados de contato ilustrativos.</p></div>
+          <div><Brand light /><p className="mt-6 max-w-sm text-sm leading-7 text-white/60">Uma trajetória de trabalho social, organização comunitária e compromisso com a moradia digna em Boa Vista, Roraima.</p></div>
+          <div><h3 className="font-extrabold">Navegação</h3><div className="mt-5 space-y-3">{links.map(([label, href]) => <a key={href} href={href} className="block text-sm text-white/60 transition hover:text-white">{label}</a>)}</div></div>
+          <div><h3 className="font-extrabold">Fale com a associação</h3><div className="mt-5 space-y-4 text-sm text-white/65"><p className="flex items-center gap-3"><MapPin size={17} className="text-[#d6b96d]" /> Boa Vista – Roraima</p><p className="flex items-center gap-3"><Phone size={17} className="text-[#d6b96d]" /> Telefone a informar</p><p className="flex items-center gap-3"><Mail size={17} className="text-[#d6b96d]" /> E-mail a informar</p></div><p className="mt-5 text-xs text-white/40">Os canais oficiais serão adicionados após confirmação.</p></div>
         </div>
-        <div className="border-t border-white/10 px-5 py-5 text-center text-xs text-white/40">© {new Date().getFullYear()} Associação das Donas de Casa de Ajuricaba. Todos os direitos reservados.</div>
+        <div className="border-t border-white/10 px-5 py-5 text-center text-xs text-white/40">© {new Date().getFullYear()} ASDCC / Ajuricaba. Todos os direitos reservados.</div>
       </footer>
     </main>
   );
