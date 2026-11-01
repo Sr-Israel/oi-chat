@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { getPublicDocumentLinks } from "@/lib/documents.functions";
 import { createFileRoute } from "@tanstack/react-router";
 import {
   ArrowRight, Menu, X, HeartHandshake, Users, Megaphone,
@@ -59,7 +60,7 @@ function Index() {
         Promise.all((newsResult.data ?? []).map(async (item: any) => ({ ...item, imageUrl: item.cover_image ? (await supabase.storage.from("asdcc-imagens").getPublicUrl(item.cover_image)).data.publicUrl : null }))),
         Promise.all((projectsResult.data ?? []).map(async (item: any) => ({ ...item, imageUrl: item.cover_image ? (await supabase.storage.from("asdcc-imagens").getPublicUrl(item.cover_image)).data.publicUrl : null }))),
         Promise.all((galleryResult.data ?? []).map(async (item: any) => ({ ...item, imageUrl: (await supabase.storage.from("asdcc-imagens").getPublicUrl(item.image_url)).data.publicUrl }))),
-        Promise.all((documentsResult.data ?? []).map(async (item: any) => ({ ...item, fileUrl: (await supabase.storage.from("asdcc-documentos").createSignedUrl(item.file_url, 3600)).data.signedUrl }))),
+        getPublicDocumentLinks().catch(() => ({} as Record<string, string>)).then((links) => (documentsResult.data ?? []).map((item: any) => ({ ...item, fileUrl: links[item.id] ?? null }))),
       ]);
       if (active) { setNewsItems(news); setProjectItems(projects); setGalleryItems(gallery); setDocumentItems(documents); }
     }
