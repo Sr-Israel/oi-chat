@@ -75,16 +75,23 @@ function Index() {
       selectors.forEach((selector) => {
         const carousel = document.querySelector<HTMLElement>(selector);
         if (!carousel || carousel.matches(":hover")) return;
+
+        const firstItem = carousel.firstElementChild as HTMLElement | null;
+        const styles = window.getComputedStyle(carousel);
+        const gap = Number.parseFloat(styles.columnGap || styles.gap) || 0;
+        const step = firstItem ? firstItem.getBoundingClientRect().width + gap : carousel.clientWidth * 0.5;
         const halfWidth = carousel.scrollWidth / 2;
-        if (halfWidth <= carousel.clientWidth) return;
-        // Os itens são duplicados: ao entrar na segunda metade, volta o deslocamento
-        // em meia largura, mantendo a mesma imagem visível e criando um loop contínuo.
-        if (carousel.scrollLeft >= halfWidth) {
-          carousel.scrollLeft -= halfWidth;
+        if (halfWidth <= carousel.clientWidth || step <= 0) return;
+
+        // A lista está duplicada. Ao chegar ao fim da primeira cópia,
+        // reposiciona sem animação e continua avançando um item por vez.
+        if (carousel.scrollLeft + step >= halfWidth - 2) {
+          carousel.scrollTo({ left: 0, behavior: "instant" });
+        } else {
+          carousel.scrollBy({ left: step, behavior: "smooth" });
         }
-        carousel.scrollBy({ left: Math.max(240, carousel.clientWidth * 0.75), behavior: "smooth" });
       });
-    }, 3500);
+    }, 5500);
     return () => window.clearInterval(timer);
   }, [newsItems, projectItems, galleryItems]);
 
