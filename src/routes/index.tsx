@@ -59,7 +59,7 @@ function Index() {
       const [news, projects, gallery, documents] = await Promise.all([
         Promise.all((newsResult.data ?? []).map(async (item: any) => ({ ...item, imageUrl: item.cover_image ? (await supabase.storage.from("asdcc-imagens").getPublicUrl(item.cover_image)).data.publicUrl : null }))),
         Promise.all((projectsResult.data ?? []).map(async (item: any) => ({ ...item, imageUrl: item.cover_image ? (await supabase.storage.from("asdcc-imagens").getPublicUrl(item.cover_image)).data.publicUrl : null }))),
-        Promise.all((galleryResult.data ?? []).map(async (item: any) => ({ ...item, imageUrl: (await supabase.storage.from("asdcc-imagens").getPublicUrl(item.image_url)).data.publicUrl }))),
+        Promise.all((galleryResult.data ?? []).map(async (item: any) => ({ ...item, imageUrl: supabase.storage.from("asdcc-imagens").getPublicUrl(item.image_url ?? "").data.publicUrl }))),
         getPublicDocumentLinks().catch(() => ({} as Record<string, string>)).then((links) => (documentsResult.data ?? []).map((item: any) => ({ ...item, fileUrl: links[item.id] ?? null }))),
       ]);
       if (active) { setNewsItems(news); setProjectItems(projects); setGalleryItems(gallery); setDocumentItems(documents); }
