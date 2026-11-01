@@ -75,13 +75,14 @@ function Index() {
       selectors.forEach((selector) => {
         const carousel = document.querySelector<HTMLElement>(selector);
         if (!carousel || carousel.matches(":hover")) return;
-        const maxScroll = carousel.scrollWidth - carousel.clientWidth;
-        if (maxScroll <= 0) return;
-        if (carousel.scrollLeft >= maxScroll - 8) {
-          carousel.scrollTo({ left: 0, behavior: "smooth" });
-        } else {
-          carousel.scrollBy({ left: Math.max(240, carousel.clientWidth * 0.75), behavior: "smooth" });
+        const halfWidth = carousel.scrollWidth / 2;
+        if (halfWidth <= carousel.clientWidth) return;
+        // Os itens são duplicados: ao entrar na segunda metade, volta o deslocamento
+        // em meia largura, mantendo a mesma imagem visível e criando um loop contínuo.
+        if (carousel.scrollLeft >= halfWidth) {
+          carousel.scrollLeft -= halfWidth;
         }
+        carousel.scrollBy({ left: Math.max(240, carousel.clientWidth * 0.75), behavior: "smooth" });
       });
     }, 3500);
     return () => window.clearInterval(timer);
@@ -149,14 +150,6 @@ function Index() {
           <div>
             <p className="text-lg leading-8 text-[#6e6273]">A Associação das Donas de Casa do Bairro Caranã / Residencial Ajuricaba (ASDCC) desenvolve um trabalho social voltado à luta pela moradia e à promoção de melhores condições de vida para famílias de Boa Vista, Roraima.</p>
             <p className="mt-5 leading-7 text-[#817586]">Com uma trajetória construída por meio da organização comunitária e da parceria com diferentes instituições, a associação segue atuando para transformar o direito à moradia em oportunidades concretas para as famílias.</p>
-            <div className="mt-7 rounded-2xl border border-[#eee5ef] bg-[#fbf7fc] p-5">
-              <h3 className="text-sm font-extrabold text-[#542477]">Dados institucionais</h3>
-              <div className="mt-3 space-y-2 text-sm leading-6 text-[#74697a]">
-                
-                <p><strong className="text-[#4c2869]">Endereço:</strong> Avenida João Liberato, 705, bairro Caranã, Boa Vista – RR</p>
-                <p><strong className="text-[#4c2869]">Presidente:</strong> Carla Cristina Rocha</p>
-              </div>
-            </div>
           </div>
         </div>
         <div className="mt-14 grid gap-4 md:grid-cols-3">{values.map(({ icon: Icon, title, text }) => <article key={title} className="rounded-3xl border border-[#eee5ef] bg-white p-7 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"><div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#f4edf6] text-[#80539a]"><Icon size={23} /></div><h3 className="mt-6 text-xl font-extrabold text-[#4c2869]">{title}</h3><p className="mt-3 text-sm leading-7 text-[#817586]">{text}</p></article>)}</div>
@@ -188,7 +181,7 @@ function Index() {
         <div className="mx-auto max-w-7xl px-5 md:px-8">
           <div className="max-w-2xl"><p className="text-xs font-extrabold tracking-[.2em] text-[#e7c979]">ALÉM DA MORADIA</p><h2 className="mt-4 text-3xl font-black leading-tight md:text-4xl">Projetos sociais e participação comunitária.</h2><p className="mt-5 leading-8 text-white/70">O trabalho no Residencial Esperança também envolve planejamento de ações junto à comunidade, fortalecendo a cidadania, a educação ambiental e as oportunidades para a juventude.</p></div>
           {projectItems.length === 0 ? <p className="mt-10 rounded-2xl border border-white/15 bg-white/[.07] p-6 text-sm text-white/70">Os projetos cadastrados e publicados pela associação aparecerão aqui.</p> : <div id="projects-carousel" className="mt-10 flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-            {projectItems.map((item, index) => <article id={`project-slide-${index}`} key={item.id} className="w-[82%] shrink-0 snap-start overflow-hidden rounded-2xl border border-white/15 bg-white/[.07] sm:w-[calc(50%-8px)] xl:w-[calc(25%-12px)]">{item.imageUrl && <img src={item.imageUrl} alt={item.title} className="h-36 w-full object-cover" />}<div className="p-5"><p className="text-[10px] font-bold tracking-widest text-[#e7c979]">{item.category || "PROJETO"}</p><h3 className="mt-2 text-lg font-extrabold">{item.title}</h3><p className="mt-2 text-sm leading-6 text-white/65">{item.description}</p></div></article>)}
+            {[...projectItems, ...projectItems].map((item, index) => <article id={`project-slide-${index}`} key={item.id} className="w-[82%] shrink-0 snap-start overflow-hidden rounded-2xl border border-white/15 bg-white/[.07] sm:w-[calc(50%-8px)] xl:w-[calc(25%-12px)]">{item.imageUrl && <img src={item.imageUrl} alt={item.title} className="h-36 w-full object-cover" />}<div className="p-5"><p className="text-[10px] font-bold tracking-widest text-[#e7c979]">{item.category || "PROJETO"}</p><h3 className="mt-2 text-lg font-extrabold">{item.title}</h3><p className="mt-2 text-sm leading-6 text-white/65">{item.description}</p></div></article>)}
           </div>}
           {projectItems.length > 1 && <div className="mt-5 flex justify-center gap-2">{projectItems.map((item, index) => <button key={item.id} aria-label={`Ir para projeto ${index + 1}`} onClick={() => document.getElementById(`project-slide-${index}`)?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "start" })} className="h-2 w-2 rounded-full bg-white/35 transition hover:bg-[#e7c979]" />)}</div>}
         </div>
@@ -196,7 +189,7 @@ function Index() {
 
       <section id="noticias" className="mx-auto max-w-7xl px-5 py-20 md:px-8 md:py-28">
         <div className="flex flex-wrap items-end justify-between gap-5"><SectionTitle eyebrow="FIQUE POR DENTRO" title="Notícias e acontecimentos" text="Acompanhe visitas técnicas, atividades, comunicados e novidades da associação." /><button type="button" onClick={() => setShowAllNews(true)} className="inline-flex items-center rounded-full border border-[#d7c4dc] px-5 py-3 text-xs font-extrabold text-[#542477] transition hover:bg-[#f7f1f8]">Ver todas as notícias <ArrowRight size={15} className="ml-2" /></button></div>
-        <div id="news-carousel" className="mt-10 flex snap-x snap-mandatory gap-5 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">{newsItems.length === 0 ? <p className="w-full rounded-2xl bg-[#f8f4f9] p-8 text-sm text-[#817586]">As notícias publicadas pela associação aparecerão aqui.</p> : newsItems.slice(0, 4).map((item, index) => <article id={`news-slide-${index}`} key={item.id} className="w-[88%] shrink-0 snap-start overflow-hidden rounded-3xl border border-[#eee5ef] bg-white shadow-sm md:w-[calc(50%-10px)]"><button type="button" onClick={() => setSelectedNews(item)} className="block w-full p-6 text-left transition hover:bg-[#fdfafd]"><div className="flex items-center justify-between gap-3"><span className="rounded-full bg-[#f5edf6] px-3 py-1 text-[10px] font-black tracking-widest text-[#80539a]">NOTÍCIA</span><span className="text-[11px] text-[#9a8da0]">{item.published_at ? new Date(item.published_at).toLocaleDateString("pt-BR") : ""}</span></div>{item.imageUrl && <img src={item.imageUrl} alt={item.title} loading="lazy" className="mt-4 h-44 w-full rounded-2xl bg-[#f7f2f8] object-cover" />}<h3 className="mt-4 text-lg font-extrabold leading-snug text-[#4c2869]">{item.title}</h3><p className="mt-2 line-clamp-3 whitespace-pre-line text-sm leading-6 text-[#817586]">{item.summary || item.content}</p><span className="mt-4 inline-block text-xs font-extrabold text-[#80539a]">Ler notícia completa →</span></button></article>)}</div>
+        <div id="news-carousel" className="mt-10 flex snap-x snap-mandatory gap-5 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">{newsItems.length === 0 ? <p className="w-full rounded-2xl bg-[#f8f4f9] p-8 text-sm text-[#817586]">As notícias publicadas pela associação aparecerão aqui.</p> : [...newsItems.slice(0, 4), ...newsItems.slice(0, 4)].map((item, index) => <article id={`news-slide-${index}`} key={item.id} className="w-[88%] shrink-0 snap-start overflow-hidden rounded-3xl border border-[#eee5ef] bg-white shadow-sm md:w-[calc(50%-10px)]"><button type="button" onClick={() => setSelectedNews(item)} className="block w-full p-6 text-left transition hover:bg-[#fdfafd]"><div className="flex items-center justify-between gap-3"><span className="rounded-full bg-[#f5edf6] px-3 py-1 text-[10px] font-black tracking-widest text-[#80539a]">NOTÍCIA</span><span className="text-[11px] text-[#9a8da0]">{item.published_at ? new Date(item.published_at).toLocaleDateString("pt-BR") : ""}</span></div>{item.imageUrl && <img src={item.imageUrl} alt={item.title} loading="lazy" className="mt-4 h-44 w-full rounded-2xl bg-[#f7f2f8] object-cover" />}<h3 className="mt-4 text-lg font-extrabold leading-snug text-[#4c2869]">{item.title}</h3><p className="mt-2 line-clamp-3 whitespace-pre-line text-sm leading-6 text-[#817586]">{item.summary || item.content}</p><span className="mt-4 inline-block text-xs font-extrabold text-[#80539a]">Ler notícia completa →</span></button></article>)}</div>
         {newsItems.length > 2 && <div className="mt-5 flex justify-center gap-2">{newsItems.slice(0, 4).map((item, index) => <button key={item.id} aria-label={`Ir para notícia ${index + 1}`} onClick={() => document.getElementById(`news-slide-${index}`)?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "start" })} className="h-2 w-2 rounded-full bg-[#542477]/25 transition hover:bg-[#542477]" />)}</div>}
       </section>
 
@@ -204,7 +197,7 @@ function Index() {
         <div className="mx-auto max-w-7xl px-5 md:px-8">
           <div className="flex flex-wrap items-end justify-between gap-5"><SectionTitle eyebrow="REGISTROS DA NOSSA CAMINHADA" title="Galeria de fotos" text="Um espaço para reunir registros de visitas, reuniões, eventos, projetos e momentos importantes da associação." /><button type="button" onClick={() => setShowAllGallery(true)} className="inline-flex items-center rounded-full border border-[#d7c4dc] px-5 py-3 text-xs font-extrabold text-[#542477] transition hover:bg-white">Ver todas as fotos <ArrowRight size={15} className="ml-2" /></button></div>
           {galleryItems.length === 0 ? <p className="mt-10 rounded-2xl bg-white p-8 text-center text-sm text-[#817586]">As fotos publicadas pela associação aparecerão aqui.</p> : <div id="gallery-carousel" className="mt-8 flex snap-x snap-mandatory gap-2 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-            {galleryItems.slice(0, 8).map((item, index) => <figure id={`gallery-slide-${index}`} key={item.id} className="w-[68%] shrink-0 snap-start overflow-hidden rounded-xl sm:w-[calc(33.333%-6px)] xl:w-[calc(25%-6px)]">
+            {[...galleryItems.slice(0, 8), ...galleryItems.slice(0, 8)].map((item, index) => <figure id={`gallery-slide-${index}`} key={item.id} className="w-[68%] shrink-0 snap-start overflow-hidden rounded-xl sm:w-[calc(33.333%-6px)] xl:w-[calc(25%-6px)]">
               <img src={item.imageUrl} alt="Foto da galeria da associação" loading="lazy" className="aspect-[3/4] h-auto w-full object-cover" />
             </figure>)}
           </div>}
