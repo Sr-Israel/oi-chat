@@ -1,44 +1,241 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { getPublicDocumentLinks } from "@/lib/documents.functions";
 import { createFileRoute } from "@tanstack/react-router";
-import { ArrowRight, MapPin, Menu, X, Trees, Sprout, Ruler, Compass, Map, ChevronDown, Building2, Leaf } from "lucide-react";
-export const Route=createFileRoute("/")({component:Index});
-const pdf="https://acrobat.adobe.com/id/urn:aaid:sc:US:8f99fb17-bd97-4d42-88a0-77071164bdfb";
-const maps="https://www.google.com/maps?q=3.252806,-60.842167";
-const blocks=[{id:"01",lots:36},{id:"02",lots:36},{id:"03",lots:36},{id:"04",lots:0,area:"Área Institucional 1"},{id:"05",lots:36},{id:"06",lots:36},{id:"07",lots:11},{id:"08",lots:20},{id:"09",lots:20},{id:"10",lots:0,area:"Área Institucional 2"},{id:"11",lots:20},{id:"12",lots:20},{id:"13",lots:31}];
-function Index(){
- const [menu,setMenu]=useState(false); const [expanded,setExpanded]=useState<string|null>(null);
- const nav=[["O empreendimento","#empreendimento"],["Estrutura","#estrutura"],["Opções","#opcoes"],["Localização","#localizacao"]];
- return <main className="min-h-screen overflow-hidden bg-[#f8f8f1] text-[#26382b]">
- <div className="bg-[#203d2b] px-4 py-2 text-center text-[11px] font-semibold tracking-[.16em] text-white/85">AGROVILA OURO VERDE <span className="mx-2 text-[#c7a96b]">•</span> TRUARU, RORAIMA</div>
- <header className="sticky top-0 z-40 border-b border-[#e8e9dd] bg-[#f8f8f1]/95 backdrop-blur"><div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-4 md:px-8">
- <a href="#inicio" className="flex items-center gap-3"><span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#244b32] text-[#e7d7a7]"><Sprout size={25}/></span><span><strong className="block text-sm font-black tracking-[.08em] text-[#24432e]">OURO VERDE</strong><span className="block text-[10px] font-semibold tracking-[.2em] text-[#8a896e]">AGROVILA • TRUARU</span></span></a>
- <nav className="hidden items-center gap-7 lg:flex">{nav.map(([t,h])=><a key={h} href={h} className="text-sm font-semibold text-[#596b58] hover:text-[#244b32]">{t}</a>)}</nav>
- <a href="#opcoes" className="hidden items-center gap-2 rounded-full bg-[#b18b4c] px-5 py-3 text-xs font-extrabold text-white md:inline-flex">Conheça as opções <ArrowRight size={15}/></a>
- <button aria-label="Abrir menu" onClick={()=>setMenu(!menu)} className="rounded-xl p-2 text-[#244b32] lg:hidden">{menu?<X/>:<Menu/>}</button></div>
- {menu&&<nav className="grid gap-1 border-t border-[#e8e9dd] bg-[#fbfbf6] px-5 py-3 lg:hidden">{nav.map(([t,h])=><a key={h} href={h} onClick={()=>setMenu(false)} className="rounded-xl px-3 py-3 text-sm font-semibold text-[#36543b]">{t}</a>)}</nav>}</header>
- <section id="inicio" className="relative isolate bg-[#e9eddf]"><div className="absolute inset-0 -z-10 opacity-40" style={{backgroundImage:"radial-gradient(#b4c2a4 1px, transparent 1px)",backgroundSize:"22px 22px"}}/>
- <div className="mx-auto grid max-w-7xl items-center gap-12 px-5 py-16 md:grid-cols-[1.05fr_.95fr] md:px-8 md:py-24"><div>
- <span className="inline-flex items-center gap-2 rounded-full border border-[#cbd5bf] bg-white/65 px-4 py-2 text-[10px] font-black tracking-[.18em] text-[#52704c]"><Leaf size={13}/> UM NOVO JEITO DE INVESTIR NA TERRA</span>
- <h1 className="mt-7 max-w-2xl text-4xl font-black leading-[1.06] tracking-tight text-[#23412d] md:text-6xl">Seu espaço para cultivar <span className="text-[#a47c3d]">novos planos.</span></h1>
- <p className="mt-6 max-w-xl text-base leading-8 text-[#64715d] md:text-lg">Conheça a AgroVila Ouro Verde, no Truaru, a aproximadamente 45 km de Boa Vista. Um projeto com opções de lotes e chácaras para quem deseja investir e construir seu futuro.</p>
- <div className="mt-9 flex flex-wrap gap-3"><a href="#opcoes" className="inline-flex items-center gap-2 rounded-full bg-[#254a32] px-6 py-4 text-sm font-extrabold text-white shadow-lg transition hover:-translate-y-0.5">Ver opções de aquisição <ArrowRight size={17}/></a><a href={maps} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-full border border-[#c4cfb9] bg-white/70 px-6 py-4 text-sm font-bold text-[#36543b]"><MapPin size={16}/> Como chegar</a></div>
- <div className="mt-12 grid max-w-lg grid-cols-3 gap-3 border-t border-[#cbd5bf] pt-6"><div><strong className="block text-2xl font-black text-[#244b32]">302</strong><span className="text-[11px] font-semibold text-[#78836f]">lotes no projeto</span></div><div><strong className="block text-2xl font-black text-[#244b32]">13</strong><span className="text-[11px] font-semibold text-[#78836f]">quadras</span></div><div><strong className="block text-2xl font-black text-[#244b32]">45 km</strong><span className="text-[11px] font-semibold text-[#78836f]">de Boa Vista*</span></div></div><p className="mt-2 text-[10px] text-[#89917f]">*Distância informada no material de divulgação.</p></div>
- <div className="relative mx-auto w-full max-w-[540px]"><div className="absolute -inset-4 rotate-3 rounded-[2.5rem] bg-[#d2dbc8]"/><div className="relative overflow-hidden rounded-[2rem] border border-white/80 bg-[#f8f8f1] p-4 shadow-2xl">
- <div className="flex items-center justify-between px-2 pb-3"><div><p className="text-[10px] font-black tracking-[.2em] text-[#9a875e]">PROJETO DO EMPREENDIMENTO</p><h2 className="mt-1 text-lg font-black text-[#2b4932]">AgroVila Ouro Verde</h2></div><Trees className="text-[#78916a]" size={27}/></div>
- <div className="relative overflow-hidden rounded-2xl bg-[#edf0e5] p-3"><div className="absolute inset-0 opacity-50" style={{backgroundImage:"linear-gradient(35deg,transparent 48%,#d2dac9 49%,#d2dac9 51%,transparent 52%),linear-gradient(125deg,transparent 48%,#d2dac9 49%,#d2dac9 51%,transparent 52%)",backgroundSize:"54px 54px"}}/>
- <div className="relative mx-auto grid max-w-[370px] grid-cols-3 gap-2 py-5">{blocks.map(b=><div key={b.id} className={`flex min-h-[76px] flex-col items-center justify-center rounded-xl border p-2 text-center shadow-sm ${b.area?"border-[#d6a7a0] bg-[#f3dfd9] text-[#8c5146]":"border-[#b6c8aa] bg-[#dce8d3] text-[#365c3d]"}`}><span className="text-[10px] font-black tracking-widest">QUADRA {b.id}</span><strong className="mt-1 text-xl font-black">{b.area?"Área":b.lots}</strong><span className="text-[9px] font-semibold">{b.area?"institucional":"lotes"}</span></div>)}</div>
- <p className="relative text-center text-[10px] font-semibold text-[#78836f]">Esquema de identificação — não representa a geometria da planta.</p></div>
- <div className="mt-3 flex items-center justify-between rounded-xl bg-[#244b32] px-4 py-3 text-white"><span className="text-xs font-bold">Planta técnica do projeto</span><a href={pdf} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-xs font-extrabold text-[#e6d4a2]">Consultar PDF <ArrowRight size={13}/></a></div></div></div></div></section>
- <section id="empreendimento" className="mx-auto max-w-7xl px-5 py-20 md:px-8 md:py-24"><div className="grid gap-12 md:grid-cols-[.8fr_1.2fr] md:items-center"><div><p className="text-[10px] font-black tracking-[.22em] text-[#a17b42]">O EMPREENDIMENTO</p><h2 className="mt-4 text-3xl font-black leading-tight text-[#294832] md:text-4xl">Um lugar para tirar projetos do papel.</h2></div><div><p className="text-lg leading-8 text-[#697565]">A AgroVila Ouro Verde está localizada na região do Truaru, em Roraima. O projeto reúne quadras, lotes e áreas institucionais, com opções comerciais para diferentes objetivos e possibilidades de aquisição.</p><p className="mt-4 text-sm leading-7 text-[#84907e]">Consulte as informações do empreendimento e conheça as condições disponíveis. A disponibilidade e os detalhes de cada unidade devem ser confirmados com a equipe responsável.</p></div></div>
- <div className="mt-12 grid gap-4 sm:grid-cols-3"><article className="rounded-3xl border border-[#e5e8dc] bg-white p-7"><Ruler className="text-[#52734c]" size={25}/><h3 className="mt-5 font-extrabold text-[#2d4a34]">Espaços definidos</h3><p className="mt-2 text-sm leading-6 text-[#7c8875]">Lotes e chácaras com dimensões apresentadas nas opções comerciais.</p></article><article className="rounded-3xl border border-[#e5e8dc] bg-white p-7"><Compass className="text-[#52734c]" size={25}/><h3 className="mt-5 font-extrabold text-[#2d4a34]">Localização</h3><p className="mt-2 text-sm leading-6 text-[#7c8875]">Região do Truaru, a aproximadamente 45 km de Boa Vista.</p></article><article className="rounded-3xl border border-[#e5e8dc] bg-white p-7"><Building2 className="text-[#52734c]" size={25}/><h3 className="mt-5 font-extrabold text-[#2d4a34]">Projeto organizado</h3><p className="mt-2 text-sm leading-6 text-[#7c8875]">13 quadras identificadas, incluindo duas áreas institucionais.</p></article></div></section>
- <section id="estrutura" className="bg-[#eef1e7] py-20 md:py-24"><div className="mx-auto max-w-7xl px-5 md:px-8"><div className="flex flex-wrap items-end justify-between gap-5"><div className="max-w-2xl"><p className="text-[10px] font-black tracking-[.22em] text-[#a17b42]">ORGANIZAÇÃO DA ÁREA</p><h2 className="mt-4 text-3xl font-black text-[#294832] md:text-4xl">Conheça a divisão das quadras.</h2><p className="mt-4 text-sm leading-7 text-[#778271]">A tabela reproduz a distribuição informada para o cadastro. Selecione uma quadra para consultar sua composição.</p></div><a href={pdf} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-full border border-[#cbd5bf] bg-white px-5 py-3 text-xs font-extrabold text-[#36543b]"><Map size={15}/> Abrir planta do projeto</a></div>
- <div className="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">{blocks.map(b=><button key={b.id} type="button" onClick={()=>setExpanded(expanded===b.id?null:b.id)} className={`rounded-2xl border p-5 text-left transition hover:-translate-y-0.5 hover:shadow-md ${b.area?"border-[#e3c5bd] bg-[#fff8f5]":"border-[#dce3d4] bg-white"}`}><div className="flex items-center justify-between"><span className="text-[10px] font-black tracking-[.16em] text-[#8a927f]">QUADRA {b.id}</span><ChevronDown size={16} className={`transition ${expanded===b.id?"rotate-180":""}`}/></div><strong className={`mt-3 block text-3xl font-black ${b.area?"text-[#9b5e50]":"text-[#2e5137]"}`}>{b.area?"—":b.lots}</strong><span className="mt-1 block text-xs font-semibold text-[#7e8978]">{b.area||"lotes no projeto"}</span>{expanded===b.id&&<p className="mt-4 border-t border-[#e8ebdf] pt-3 text-xs leading-5 text-[#778271]">{b.area?"Área institucional, não contabilizada como lote comercial.":`Quadra com ${b.lots} lotes conforme a distribuição informada.`}</p>}</button>)}</div>
- <div className="mt-6 flex flex-wrap items-center justify-between gap-4 rounded-2xl bg-[#244b32] px-6 py-5 text-white"><div><p className="text-[10px] font-bold tracking-[.18em] text-white/60">TOTAL CONFIRMADO PARA O CADASTRO</p><p className="mt-1 text-sm font-semibold text-white/85">11 quadras com lotes + 2 áreas institucionais</p></div><div className="text-right"><strong className="text-3xl font-black">302</strong><span className="ml-2 text-xs font-semibold text-white/65">lotes</span></div></div></div></section>
- <section id="opcoes" className="mx-auto max-w-7xl px-5 py-20 md:px-8 md:py-24"><div className="mx-auto max-w-2xl text-center"><p className="text-[10px] font-black tracking-[.22em] text-[#a17b42]">OPÇÕES DE AQUISIÇÃO</p><h2 className="mt-4 text-3xl font-black text-[#294832] md:text-4xl">Escolha o espaço que combina com seus planos.</h2><p className="mt-4 text-sm leading-7 text-[#7c8875]">Valores e condições comerciais informados para o empreendimento. Consulte a equipe para confirmar disponibilidade e condições vigentes.</p></div>
- <div className="mt-12 grid gap-6 md:grid-cols-2"><article className="overflow-hidden rounded-[2rem] border border-[#e3e8dc] bg-white shadow-sm"><div className="bg-[#e8eee1] p-8"><div className="flex items-center justify-between"><span className="rounded-full bg-white px-3 py-1 text-[10px] font-black tracking-widest text-[#53734e]">LOTE</span><Ruler className="text-[#65815d]"/></div><h3 className="mt-6 text-2xl font-black text-[#294832]">Lote</h3><p className="mt-2 text-sm text-[#71806b]">10 × 20 metros <span className="mx-2">•</span> 200 m²</p></div><div className="p-8"><div className="grid grid-cols-2 gap-4"><div><p className="text-xs font-semibold text-[#8a927f]">À vista</p><strong className="mt-1 block text-2xl font-black text-[#2e5137]">R$ 20.000</strong></div><div><p className="text-xs font-semibold text-[#8a927f]">Parcelado</p><strong className="mt-1 block text-2xl font-black text-[#2e5137]">R$ 25.000</strong></div></div><div className="mt-6 rounded-2xl bg-[#f5f7f1] p-4"><p className="text-xs font-bold text-[#526a4d]">Condição parcelada informada</p><p className="mt-2 text-sm text-[#71806b]">Parcelas de R$ 300 a R$ 500.</p><p className="mt-1 text-xs text-[#92998b]">Entrada a confirmar.</p></div></div></article>
- <article className="overflow-hidden rounded-[2rem] border border-[#e3e8dc] bg-white shadow-sm"><div className="bg-[#f0eadc] p-8"><div className="flex items-center justify-between"><span className="rounded-full bg-white px-3 py-1 text-[10px] font-black tracking-widest text-[#92713f]">CHÁCARA</span><Trees className="text-[#9a7a46]"/></div><h3 className="mt-6 text-2xl font-black text-[#5c4b30]">Chácara</h3><p className="mt-2 text-sm text-[#8a795d]">20 × 20 metros <span className="mx-2">•</span> 400 m²</p></div><div className="p-8"><div className="grid grid-cols-2 gap-4"><div><p className="text-xs font-semibold text-[#8a927f]">À vista</p><strong className="mt-1 block text-2xl font-black text-[#765c32]">R$ 35.000</strong></div><div><p className="text-xs font-semibold text-[#8a927f]">Parcelado</p><strong className="mt-1 block text-2xl font-black text-[#765c32]">R$ 40.000</strong></div></div><div className="mt-6 rounded-2xl bg-[#faf7ef] p-4"><p className="text-xs font-bold text-[#92713f]">Condição parcelada informada</p><p className="mt-2 text-sm text-[#897858]">Entrada de R$ 7.000 a R$ 10.000.</p><p className="mt-1 text-sm text-[#897858]">Parcelas de R$ 700 a R$ 1.000.</p></div></div></article></div><p className="mt-5 text-center text-[11px] leading-5 text-[#92998b]">As condições apresentadas são referências comerciais e podem depender de análise e negociação. Confirme os detalhes antes de fechar a aquisição.</p></section>
- <section id="localizacao" className="bg-[#243f2d] py-20 text-white md:py-24"><div className="mx-auto grid max-w-7xl gap-10 px-5 md:grid-cols-[1fr_.8fr] md:items-center md:px-8"><div><p className="text-[10px] font-black tracking-[.22em] text-[#d4bd83]">ONDE ESTAMOS</p><h2 className="mt-4 text-3xl font-black md:text-4xl">Encontre a AgroVila Ouro Verde.</h2><p className="mt-5 max-w-xl text-sm leading-7 text-white/70">Localizada na região do Truaru, em Roraima, a aproximadamente 45 km de Boa Vista. Consulte o ponto de referência no mapa para planejar sua visita.</p><div className="mt-7 flex flex-wrap gap-3"><a href={maps} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-full bg-[#c4a15d] px-6 py-4 text-sm font-extrabold text-[#263b2a]"><MapPin size={17}/> Abrir localização <ArrowRight size={15}/></a><a href={pdf} target="_blank" rel="noreferrer" className="rounded-full border border-white/25 px-6 py-4 text-sm font-bold text-white">Ver planta técnica</a></div></div><div className="overflow-hidden rounded-[2rem] border border-white/15 bg-white/5 p-3"><iframe title="Localização da AgroVila Ouro Verde" src="https://maps.google.com/maps?q=3.252806,-60.842167&z=13&output=embed" className="h-[320px] w-full rounded-[1.5rem] border-0" loading="lazy" referrerPolicy="no-referrer-when-downgrade"/><p className="px-3 pb-2 pt-3 text-xs text-white/60">Coordenadas: 3°15'10.1&quot;N, 60°50'31.8&quot;W</p></div></div></section>
- <section className="bg-[#e9eddf] px-5 py-16 text-center"><div className="mx-auto max-w-3xl"><span className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[#d9e3d0] text-[#52734c]"><MessageCircleFallback/></span><h2 className="mt-5 text-3xl font-black text-[#294832]">Quer saber mais sobre a AgroVila?</h2><p className="mt-3 text-sm leading-7 text-[#71806b]">Consulte a planta do projeto e confirme as condições e a disponibilidade das unidades.</p><a href={pdf} target="_blank" rel="noreferrer" className="mt-7 inline-flex items-center gap-2 rounded-full bg-[#254a32] px-7 py-4 text-sm font-extrabold text-white">Consultar projeto completo <ArrowRight size={16}/></a></div></section>
- <footer className="bg-[#172c20] px-5 py-8 text-white/60"><div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 text-center sm:flex-row sm:text-left"><div><p className="text-sm font-black tracking-[.12em] text-white">AGROVILA OURO VERDE</p><p className="mt-1 text-xs">Truaru • Roraima</p></div><p className="text-[11px]">Informações comerciais sujeitas à confirmação com a administração.</p><span className="text-xs">© {new Date().getFullYear()} AgroVila Ouro Verde</span></div></footer></main>;
+import {
+  ArrowRight, Menu, X, HeartHandshake, Users, Megaphone,
+  MapPin, Phone, Mail, ShieldCheck, Home, Building2, Leaf, Images, FileText
+} from "lucide-react";
+
+export const Route = createFileRoute("/")({ component: Index });
+
+const values = [
+  { icon: HeartHandshake, title: "Compromisso social", text: "Atuação voltada à promoção da moradia digna e à melhoria da qualidade de vida das famílias." },
+  { icon: Users, title: "Participação comunitária", text: "Diálogo, organização e trabalho conjunto com as famílias e parceiros." },
+  { icon: ShieldCheck, title: "Responsabilidade", text: "Compromisso com as iniciativas e com a comunidade que a associação representa." },
+];
+
+function Brand({ light = false }: { light?: boolean }) {
+  return (
+    <a href="#inicio" className="flex items-center gap-3">
+      <img src="/images/logo.png" alt="Logo da ASDCC" className="h-12 w-12 shrink-0 object-contain" />
+      <span className={`max-w-[230px] text-sm font-extrabold leading-tight tracking-tight ${light ? "text-white" : "text-[#45205f]"}`}>
+        ASSOCIAÇÃO DAS DONAS DE CASA
+        
+      </span>
+    </a>
+  );
 }
-function MessageCircleFallback(){return <span className="text-2xl">✦</span>}
+
+function SectionTitle({ eyebrow, title, text }: { eyebrow: string; title: string; text?: string }) {
+  return (
+    <div className="max-w-2xl">
+      <p className="text-xs font-extrabold tracking-[.2em] text-[#a17b39]">{eyebrow}</p>
+      <h2 className="mt-3 text-3xl font-black leading-tight tracking-tight text-[#432255] md:text-4xl">{title}</h2>
+      {text && <p className="mt-4 leading-7 text-[#74697a]">{text}</p>}
+    </div>
+  );
+}
+
+function Index() {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [newsItems, setNewsItems] = useState<any[]>([]);
+  const [projectItems, setProjectItems] = useState<any[]>([]);
+  const [galleryItems, setGalleryItems] = useState<any[]>([]);
+  const [documentItems, setDocumentItems] = useState<any[]>([]);
+  const [selectedNews, setSelectedNews] = useState<any | null>(null);
+  const [showAllNews, setShowAllNews] = useState(false);
+  const [showAllGallery, setShowAllGallery] = useState(false);
+  const [selectedGalleryImage, setSelectedGalleryImage] = useState<any | null>(null);
+
+  useEffect(() => {
+    let active = true;
+    async function loadPublicContent() {
+      const [newsResult, projectsResult, galleryResult, documentsResult] = await Promise.all([
+        supabase.from("news").select("id,title,summary,content,cover_image,images,published_at,created_at").eq("status", "published").order("published_at", { ascending: false }),
+        supabase.from("projects").select("id,title,description,category,cover_image,created_at").eq("status", "published").order("created_at", { ascending: false }),
+        supabase.from("gallery").select("id,title,description,image_url,album,created_at").eq("is_published", true).order("created_at", { ascending: false }),
+        supabase.from("documents").select("id,title,description,file_url,category,created_at").eq("is_public", true).order("created_at", { ascending: false }),
+      ]);
+      if (!active) return;
+      const [news, projects, gallery, documents] = await Promise.all([
+        Promise.all((newsResult.data ?? []).map(async (item: any) => ({ ...item, imageUrl: item.cover_image ? supabase.storage.from("asdcc-imagens").getPublicUrl(item.cover_image).data.publicUrl : null, imageUrls: (item.images ?? []).map((path: string) => supabase.storage.from("asdcc-imagens").getPublicUrl(path).data.publicUrl) }))),
+        Promise.all((projectsResult.data ?? []).map(async (item: any) => ({ ...item, imageUrl: item.cover_image ? (await supabase.storage.from("asdcc-imagens").getPublicUrl(item.cover_image)).data.publicUrl : null }))),
+        Promise.all((galleryResult.data ?? []).map(async (item: any) => ({ ...item, imageUrl: supabase.storage.from("asdcc-imagens").getPublicUrl(item.image_url ?? "").data.publicUrl }))),
+        getPublicDocumentLinks().catch(() => ({} as Record<string, string>)).then((links) => (documentsResult.data ?? []).map((item: any) => ({ ...item, fileUrl: links[item.id] ?? null }))),
+      ]);
+      if (active) { setNewsItems(news); setProjectItems(projects); setGalleryItems(gallery); setDocumentItems(documents); }
+    }
+    loadPublicContent().catch((error) => console.error("Erro ao carregar conteúdo público:", error));
+    return () => { active = false; };
+  }, []);
+  useEffect(() => {
+    const selectors = ["#projects-carousel", "#news-carousel", "#gallery-carousel"];
+    const timer = window.setInterval(() => {
+      selectors.forEach((selector) => {
+        const carousel = document.querySelector<HTMLElement>(selector);
+        if (!carousel || carousel.matches(":hover")) return;
+
+        const firstItem = carousel.firstElementChild as HTMLElement | null;
+        const styles = window.getComputedStyle(carousel);
+        const gap = Number.parseFloat(styles.columnGap || styles.gap) || 0;
+        const step = firstItem ? firstItem.getBoundingClientRect().width + gap : carousel.clientWidth * 0.5;
+        const halfWidth = carousel.scrollWidth / 2;
+        if (halfWidth <= carousel.clientWidth || step <= 0) return;
+
+        // A lista está duplicada. Ao chegar ao fim da primeira cópia,
+        // reposiciona sem animação e continua avançando um item por vez.
+        if (carousel.scrollLeft + step >= halfWidth - 2) {
+          carousel.scrollTo({ left: 0, behavior: "instant" });
+        } else {
+          carousel.scrollBy({ left: step, behavior: "smooth" });
+        }
+      });
+    }, 5500);
+    return () => window.clearInterval(timer);
+  }, [newsItems, projectItems, galleryItems]);
+
+  const close = () => setMenuOpen(false);
+  const links = [
+    ["Início", "#inicio"], ["A associação", "#sobre"], ["Conquistas", "#conquistas"],
+    ["Projetos", "#projetos"], ["Notícias", "#noticias"], ["Galeria", "#galeria"], ["Contato", "#contato"],
+  ];
+
+  return (
+    <main className="min-h-screen bg-[#fffefa] text-[#30243d]">
+      <div className="bg-[#45205f] px-5 py-2 text-center text-[11px] font-semibold tracking-wide text-white/90">
+        ASSOCIAÇÃO DAS DONAS DE CASA DO BAIRRO CARANÃ <span className="mx-2 text-[#e2c36f]">•</span> ASDCC / AJURICABA
+      </div>
+
+      <header className="sticky top-0 z-40 border-b border-[#eee7ef] bg-[#fffefa]/95 backdrop-blur">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-3 md:px-8">
+          <Brand />
+          <nav className="hidden items-center gap-5 lg:flex">
+            {links.map(([label, href]) => <a key={href} href={href} className="text-xs font-bold text-[#665b6d] transition hover:text-[#80539a]">{label}</a>)}
+          </nav>
+          <a href="https://wa.me/5595991508831" target="_blank" rel="noreferrer" className="hidden items-center rounded-full bg-[#542477] px-5 py-3 text-xs font-bold text-white transition hover:bg-[#68408a] md:inline-flex">Fale com a associação <ArrowRight size={15} className="ml-2" /></a>
+          <button aria-label="Abrir menu" onClick={() => setMenuOpen(!menuOpen)} className="rounded-xl p-2 text-[#542477] lg:hidden">{menuOpen ? <X /> : <Menu />}</button>
+        </div>
+        {menuOpen && <nav className="border-t border-[#eee7ef] bg-white px-5 py-3 lg:hidden">{links.map(([label, href]) => <a key={href} href={href} onClick={close} className="block rounded-lg px-3 py-3 text-sm font-semibold text-[#542477] hover:bg-[#f7f1f8]">{label}</a>)}</nav>}
+      </header>
+
+      <section id="inicio" className="relative isolate overflow-hidden bg-[#f5eff7]">
+        <div className="absolute -right-24 -top-24 -z-10 h-[520px] w-[520px] rounded-full border border-[#ddcce3]" />
+        <div className="absolute -right-8 top-0 -z-10 h-[390px] w-[390px] rounded-full border border-[#ddcce3]" />
+        <div className="mx-auto grid max-w-7xl items-center gap-12 px-5 py-16 md:grid-cols-[1.1fr_.9fr] md:px-8 md:py-24">
+          <div>
+            <span className="inline-flex items-center gap-2 rounded-full border border-[#dfcce4] bg-white/80 px-4 py-2 text-[10px] font-extrabold tracking-[.16em] text-[#80539a]"><span className="h-2 w-2 rounded-full bg-[#c79c43]" /> MORADIA DIGNA • CIDADANIA • COMUNIDADE</span>
+            <h1 className="mt-7 max-w-2xl text-4xl font-black leading-[1.08] tracking-tight text-[#432255] md:text-6xl">Trabalhando por um futuro com <span className="text-[#a77b35]">mais dignidade e moradia.</span></h1>
+            <p className="mt-6 max-w-xl text-base leading-8 text-[#6f6274] md:text-lg">Conheça a trajetória da Associação das Donas de Casa do Bairro Caranã / Residencial Ajuricaba e o trabalho desenvolvido em defesa da moradia social em Boa Vista, Roraima.</p>
+            <div className="mt-9 flex flex-wrap gap-3">
+              <a href="#sobre" className="inline-flex items-center rounded-full bg-[#542477] px-6 py-4 text-sm font-bold text-white shadow-lg shadow-[#542477]/15 transition hover:-translate-y-0.5 hover:bg-[#68408a]">Conheça nossa história <ArrowRight size={17} className="ml-2" /></a>
+              <a href="#conquistas" className="inline-flex items-center rounded-full border border-[#d7c4dc] bg-white/80 px-6 py-4 text-sm font-bold text-[#563269] transition hover:bg-white">Nossas conquistas</a>
+            </div>
+            <div className="mt-12 flex items-center gap-3 border-t border-[#dfd0e3] pt-6">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#e7d8eb] text-[#542477]"><HeartHandshake size={20} /></div>
+              <p className="text-xs font-medium leading-5 text-[#786b7c]">Uma história de organização comunitária,<br />persistência e compromisso com a moradia social.</p>
+            </div>
+          </div>
+
+          <div className="relative mx-auto w-full max-w-[470px]">
+            <div className="absolute inset-5 rounded-[2.5rem] bg-[#e6d7eb] rotate-3" />
+            <div className="relative overflow-hidden rounded-[2.5rem] border border-white bg-white p-3 shadow-2xl shadow-[#45205f]/15">
+              <img
+                src="/images/associacao.jpg"
+                alt="Registro da Associação das Donas de Casa do Bairro Caranã"
+                className="h-[420px] w-full rounded-[2rem] object-cover"
+                loading="eager"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="sobre" className="mx-auto max-w-7xl px-5 py-20 md:px-8 md:py-28">
+        <div className="grid gap-10 md:grid-cols-[.85fr_1.15fr] md:gap-20">
+          <SectionTitle eyebrow="QUEM SOMOS" title="Uma associação que trabalha pela moradia digna." />
+          <div>
+            <p className="text-lg leading-8 text-[#6e6273]">A Associação das Donas de Casa do Bairro Caranã / Residencial Ajuricaba (ASDCC) desenvolve um trabalho social voltado à luta pela moradia e à promoção de melhores condições de vida para famílias de Boa Vista, Roraima.</p>
+            <p className="mt-5 leading-7 text-[#817586]">Com uma trajetória construída por meio da organização comunitária e da parceria com diferentes instituições, a associação segue atuando para transformar o direito à moradia em oportunidades concretas para as famílias.</p>
+          </div>
+        </div>
+        <div className="mt-14 grid gap-4 md:grid-cols-3">{values.map(({ icon: Icon, title, text }) => <article key={title} className="rounded-3xl border border-[#eee5ef] bg-white p-7 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"><div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#f4edf6] text-[#80539a]"><Icon size={23} /></div><h3 className="mt-6 text-xl font-extrabold text-[#4c2869]">{title}</h3><p className="mt-3 text-sm leading-7 text-[#817586]">{text}</p></article>)}</div>
+      </section>
+
+      <section id="conquistas" className="bg-[#fbf7ef] py-14 md:py-18">
+        <div className="mx-auto max-w-7xl px-5 md:px-8">
+          <SectionTitle eyebrow="NOSSA HISTÓRIA" title="Conquistas que fazem parte da nossa caminhada." text="Cada empreendimento representa uma etapa importante na luta por moradia social e por mais dignidade para as famílias." />
+          <div className="mt-12 grid gap-5 md:grid-cols-2">
+            <article className="rounded-3xl border border-[#eadfca] bg-white p-8 shadow-sm">
+              <div className="flex items-center justify-between"><span className="rounded-full bg-[#f4edf6] px-3 py-1 text-[10px] font-black tracking-widest text-[#80539a]">CONQUISTA • 2015</span><Home className="text-[#a17b39]" size={24} /></div>
+              <h3 className="mt-6 text-2xl font-black text-[#432255]">Residencial Ajuricaba</h3>
+              <img src="/images/casa1.jpg" alt="Moradias do Residencial Ajuricaba" loading="lazy" className="mt-5 h-56 w-full rounded-2xl object-cover" />
+              <p className="mt-3 text-sm leading-7 text-[#817586]">Em 2015, a associação participou da conquista e entrega de 200 unidades habitacionais por meio do programa Minha Casa, Minha Vida – Entidades, um marco importante em sua trajetória.</p>
+              <div className="mt-8 flex items-end gap-3"><span className="text-5xl font-black text-[#542477]">200</span><span className="pb-1 text-sm font-semibold text-[#8b7d90]">unidades habitacionais entregues</span></div>
+            </article>
+            <article className="rounded-3xl border border-[#eadfca] bg-white p-8 shadow-sm">
+              <div className="flex items-center justify-between"><span className="rounded-full bg-[#fbf4df] px-3 py-1 text-[10px] font-black tracking-widest text-[#92702f]">NOVO EMPREENDIMENTO</span><Building2 className="text-[#a17b39]" size={24} /></div>
+              <h3 className="mt-6 text-2xl font-black text-[#432255]">Residencial Esperança</h3>
+              <img src="/images/casa.png" alt="Imagem do novo empreendimento Residencial Esperança" loading="lazy" className="mt-5 h-56 w-full rounded-2xl object-cover" />
+              <p className="mt-3 text-sm leading-7 text-[#817586]">A associação celebrou a assinatura do contrato do Minha Casa, Minha Vida – Entidades para um novo empreendimento com 435 moradias. A etapa marca o avanço do projeto em direção à construção das casas esperadas pelas famílias.</p>
+              <div className="mt-8 flex items-end gap-3"><span className="text-5xl font-black text-[#a17b35]">435</span><span className="pb-1 text-sm font-semibold text-[#8b7d90]">moradias previstas no empreendimento</span></div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="projetos" className="bg-[#45205f] py-14 text-white md:py-18">
+        <div className="mx-auto max-w-7xl px-5 md:px-8">
+          <div className="max-w-2xl"><p className="text-xs font-extrabold tracking-[.2em] text-[#e7c979]">ALÉM DA MORADIA</p><h2 className="mt-4 text-3xl font-black leading-tight md:text-4xl">Projetos sociais e participação comunitária.</h2><p className="mt-5 leading-8 text-white/70">O trabalho no Residencial Esperança também envolve planejamento de ações junto à comunidade, fortalecendo a cidadania, a educação ambiental e as oportunidades para a juventude.</p></div>
+          {projectItems.length === 0 ? <p className="mt-10 rounded-2xl border border-white/15 bg-white/[.07] p-6 text-sm text-white/70">Os projetos cadastrados e publicados pela associação aparecerão aqui.</p> : <div id="projects-carousel" className="mt-10 flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            {[...projectItems, ...projectItems].map((item, index) => <article id={`project-slide-${index}`} key={item.id} className="w-[82%] shrink-0 snap-start overflow-hidden rounded-2xl border border-white/15 bg-white/[.07] sm:w-[calc(50%-8px)] xl:w-[calc(25%-12px)]">{item.imageUrl && <img src={item.imageUrl} alt={item.title} className="h-36 w-full object-cover" />}<div className="p-5"><p className="text-[10px] font-bold tracking-widest text-[#e7c979]">{item.category || "PROJETO"}</p><h3 className="mt-2 text-lg font-extrabold">{item.title}</h3><p className="mt-2 text-sm leading-6 text-white/65">{item.description}</p></div></article>)}
+          </div>}
+          {projectItems.length > 1 && <div className="mt-5 flex justify-center gap-2">{projectItems.map((item, index) => <button key={item.id} aria-label={`Ir para projeto ${index + 1}`} onClick={() => document.getElementById(`project-slide-${index}`)?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "start" })} className="h-2 w-2 rounded-full bg-white/35 transition hover:bg-[#e7c979]" />)}</div>}
+        </div>
+      </section>
+
+      <section id="noticias" className="mx-auto max-w-7xl px-5 py-20 md:px-8 md:py-28">
+        <div className="flex flex-wrap items-end justify-between gap-5"><SectionTitle eyebrow="FIQUE POR DENTRO" title="Notícias e acontecimentos" text="Acompanhe visitas técnicas, atividades, comunicados e novidades da associação." /><button type="button" onClick={() => setShowAllNews(true)} className="inline-flex items-center rounded-full border border-[#d7c4dc] px-5 py-3 text-xs font-extrabold text-[#542477] transition hover:bg-[#f7f1f8]">Ver todas as notícias <ArrowRight size={15} className="ml-2" /></button></div>
+        <div id="news-carousel" className="mt-10 flex snap-x snap-mandatory gap-5 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">{newsItems.length === 0 ? <p className="w-full rounded-2xl bg-[#f8f4f9] p-8 text-sm text-[#817586]">As notícias publicadas pela associação aparecerão aqui.</p> : [...newsItems.slice(0, 4), ...newsItems.slice(0, 4)].map((item, index) => <article id={`news-slide-${index}`} key={item.id} className="w-[88%] shrink-0 snap-start overflow-hidden rounded-3xl border border-[#eee5ef] bg-white shadow-sm md:w-[calc(50%-10px)]"><button type="button" onClick={() => setSelectedNews(item)} className="block w-full p-6 text-left transition hover:bg-[#fdfafd]"><div className="flex items-center justify-between gap-3"><span className="rounded-full bg-[#f5edf6] px-3 py-1 text-[10px] font-black tracking-widest text-[#80539a]">NOTÍCIA</span><span className="text-[11px] text-[#9a8da0]">{item.published_at ? new Date(item.published_at).toLocaleDateString("pt-BR") : ""}</span></div>{item.imageUrl && <img src={item.imageUrl} alt={item.title} loading="lazy" className="mt-4 h-44 w-full rounded-2xl bg-[#f7f2f8] object-cover" />}<h3 className="mt-4 text-lg font-extrabold leading-snug text-[#4c2869]">{item.title}</h3><p className="mt-2 line-clamp-3 whitespace-pre-line text-sm leading-6 text-[#817586]">{item.summary || item.content}</p><span className="mt-4 inline-block text-xs font-extrabold text-[#80539a]">Ler notícia completa →</span></button></article>)}</div>
+        {newsItems.length > 2 && <div className="mt-5 flex justify-center gap-2">{newsItems.slice(0, 4).map((item, index) => <button key={item.id} aria-label={`Ir para notícia ${index + 1}`} onClick={() => document.getElementById(`news-slide-${index}`)?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "start" })} className="h-2 w-2 rounded-full bg-[#542477]/25 transition hover:bg-[#542477]" />)}</div>}
+      </section>
+
+      <section id="galeria" className="bg-[#f7f2f8] py-14 md:py-18">
+        <div className="mx-auto max-w-7xl px-5 md:px-8">
+          <div className="flex flex-wrap items-end justify-between gap-5"><SectionTitle eyebrow="REGISTROS DA NOSSA CAMINHADA" title="Galeria de fotos" text="Um espaço para reunir registros de visitas, reuniões, eventos, projetos e momentos importantes da associação." /><button type="button" onClick={() => setShowAllGallery(true)} className="inline-flex items-center rounded-full border border-[#d7c4dc] px-5 py-3 text-xs font-extrabold text-[#542477] transition hover:bg-white">Ver todas as fotos <ArrowRight size={15} className="ml-2" /></button></div>
+          {galleryItems.length === 0 ? <p className="mt-10 rounded-2xl bg-white p-8 text-center text-sm text-[#817586]">As fotos publicadas pela associação aparecerão aqui.</p> : <div id="gallery-carousel" className="mt-8 flex snap-x snap-mandatory gap-2 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            {[...galleryItems.slice(0, 8), ...galleryItems.slice(0, 8)].map((item, index) => <figure id={`gallery-slide-${index}`} key={item.id} className="w-[68%] shrink-0 snap-start overflow-hidden rounded-xl sm:w-[calc(33.333%-6px)] xl:w-[calc(25%-6px)]">
+              <img src={item.imageUrl} alt="Foto da galeria da associação" loading="lazy" className="aspect-[3/4] h-auto w-full object-cover" />
+            </figure>)}
+          </div>}
+          {galleryItems.length > 4 && <div className="mt-4 flex justify-center gap-2">{galleryItems.slice(0, 8).map((item, index) => <button key={item.id} aria-label={`Ir para foto ${index + 1}`} onClick={() => document.getElementById(`gallery-slide-${index}`)?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "start" })} className="h-2 w-2 rounded-full bg-[#542477]/25 transition hover:bg-[#542477]" />)}</div>}
+        </div>
+      </section>
+
+      <section id="transparencia" className="mx-auto max-w-7xl px-5 py-12 md:px-8">
+        <div className="rounded-3xl border border-[#eee5ef] bg-white p-8 shadow-sm">
+          <div className="flex items-center gap-4"><div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#f4edf6] text-[#80539a]"><FileText size={23} /></div><h2 className="text-xl font-black text-[#432255]">Transparência e documentos</h2></div>
+          <div className="mt-6 flex flex-wrap gap-3">{documentItems.length === 0 ? <span className="rounded-full bg-[#fbf4df] px-4 py-2 text-xs font-bold text-[#92702f]">Nenhum documento publicado</span> : documentItems.map(item => <a key={item.id} href={item.fileUrl || "#"} target="_blank" rel="noreferrer" className="rounded-xl border border-[#eadfca] px-4 py-3 text-sm font-bold text-[#542477] hover:bg-[#fbf7ef]">{item.title} ↗</a>)}</div>
+        </div>
+      </section>
+
+      <section className="bg-[#fbf6ed] py-12">
+        <div className="mx-auto flex max-w-7xl flex-col items-center gap-5 px-5 text-center md:px-8"><div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#eadfca] text-[#8e6a32]"><HeartHandshake size={26} /></div><p className="text-xs font-extrabold tracking-[.2em] text-[#a17b39]">NOSSO COMPROMISSO</p><h2 className="max-w-2xl text-3xl font-black leading-tight text-[#432255] md:text-4xl">Moradia digna transforma histórias e abre caminhos.</h2><p className="max-w-xl leading-7 text-[#817586]">Seguimos trabalhando em parceria para que mais famílias tenham acesso a oportunidades e a um novo começo.</p><a href="https://wa.me/5595991508831" target="_blank" rel="noreferrer" className="mt-2 inline-flex items-center rounded-full bg-[#542477] px-7 py-4 text-sm font-extrabold text-white hover:bg-[#68408a]">Entre em contato <ArrowRight size={16} className="ml-2" /></a></div>
+      </section>
+
+      {showAllNews && <div className="fixed inset-0 z-[65] flex items-center justify-center bg-[#1e1425]/80 p-4" onClick={() => setShowAllNews(false)}><div role="dialog" aria-modal="true" aria-label="Todas as notícias" onClick={(event) => event.stopPropagation()} className="max-h-[90vh] w-full max-w-5xl overflow-y-auto rounded-3xl bg-white shadow-2xl"><div className="sticky top-0 z-10 flex items-center justify-between border-b border-[#eee5ef] bg-white/95 px-5 py-4 backdrop-blur"><div><p className="text-xs font-black tracking-widest text-[#80539a]">ASDCC / AJURICABA</p><h2 className="mt-1 text-xl font-black text-[#432255]">Todas as notícias</h2></div><button type="button" onClick={() => setShowAllNews(false)} className="rounded-full bg-[#f5eff7] px-3 py-2 text-sm font-bold text-[#542477]">Fechar ×</button></div><div className="grid gap-4 p-5 sm:grid-cols-2 lg:grid-cols-3 md:p-7">{newsItems.map((item) => <button key={item.id} type="button" onClick={() => { setShowAllNews(false); setSelectedNews(item); }} className="overflow-hidden rounded-2xl border border-[#eee5ef] text-left transition hover:shadow-md">{item.imageUrl && <img src={item.imageUrl} alt={item.title} className="h-40 w-full bg-[#f7f2f8] object-cover" />}<div className="p-4"><p className="text-[10px] font-bold text-[#9a8da0]">{item.published_at ? new Date(item.published_at).toLocaleDateString("pt-BR") : ""}</p><h3 className="mt-2 font-extrabold text-[#4c2869]">{item.title}</h3><p className="mt-2 line-clamp-3 text-xs leading-5 text-[#817586]">{item.summary || item.content}</p><span className="mt-3 inline-block text-xs font-extrabold text-[#80539a]">Ler notícia →</span></div></button>)}</div>{newsItems.length === 0 && <p className="p-8 text-center text-sm text-[#817586]">Nenhuma notícia publicada.</p>}</div></div>}
+      {showAllGallery && <div className="fixed inset-0 z-[65] overflow-y-auto bg-[#1e1425]"><div className="sticky top-0 z-10 flex items-center justify-between border-b border-white/10 bg-[#1e1425]/95 px-5 py-4 backdrop-blur"><h2 className="text-xl font-black text-white">Galeria de fotos</h2><button type="button" onClick={() => setShowAllGallery(false)} className="rounded-full bg-white/10 px-4 py-2 text-sm font-bold text-white">Fechar ×</button></div>{galleryItems.length === 0 ? <p className="p-8 text-center text-sm text-white/70">Nenhuma foto publicada.</p> : <div className="grid grid-cols-2 gap-1 p-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">{galleryItems.map((item) => <button key={item.id} type="button" onClick={() => setSelectedGalleryImage(item)} className="group block aspect-square overflow-hidden bg-black/20"><img src={item.imageUrl} alt="Foto da associação" loading="lazy" className="h-full w-full object-cover transition duration-300 group-hover:scale-105" /></button>)}</div>}</div>}
+      {selectedGalleryImage && <div className="fixed inset-0 z-[80] flex items-center justify-center bg-black/95 p-3" onClick={() => setSelectedGalleryImage(null)}><button type="button" onClick={() => setSelectedGalleryImage(null)} aria-label="Fechar imagem ampliada" className="absolute right-5 top-5 z-10 rounded-full bg-white/15 px-4 py-2 text-sm font-bold text-white">Fechar ×</button><img src={selectedGalleryImage.imageUrl} alt="Foto ampliada da associação" onClick={(event) => event.stopPropagation()} className="max-h-[92vh] max-w-[96vw] object-contain" /></div>}
+      {selectedNews && <div className="fixed inset-0 z-[70] flex items-center justify-center bg-[#1e1425]/80 p-4" onClick={() => setSelectedNews(null)}><div role="dialog" aria-modal="true" aria-label={selectedNews.title} onClick={(event) => event.stopPropagation()} className="max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-3xl bg-white shadow-2xl"><div className="sticky top-0 z-10 flex items-center justify-between border-b border-[#eee5ef] bg-white/95 px-5 py-4 backdrop-blur"><span className="text-xs font-black tracking-widest text-[#80539a]">NOTÍCIA COMPLETA</span><button type="button" onClick={() => setSelectedNews(null)} aria-label="Fechar notícia" className="rounded-full bg-[#f5eff7] px-3 py-2 text-sm font-bold text-[#542477]">Fechar ×</button></div><div className="p-5 md:p-8"><p className="text-xs text-[#9a8da0]">{selectedNews.published_at ? new Date(selectedNews.published_at).toLocaleDateString("pt-BR") : ""}</p><h2 className="mt-2 text-2xl font-black leading-tight text-[#432255] md:text-3xl">{selectedNews.title}</h2>{selectedNews.content && <p className="mt-5 whitespace-pre-line text-sm leading-7 text-[#6f6274]">{selectedNews.content}</p>}<div className="mt-7 flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">{(selectedNews.imageUrls ?? []).map((url: string, index: number) => <img key={`news-modal-${selectedNews.id}-${index}`} src={url} alt={`Foto adicional ${index + 1} da notícia`} className="max-h-[55vh] w-full min-w-full snap-center rounded-2xl bg-[#f7f2f8] object-contain" />)}</div>{(selectedNews.imageUrls ?? []).length > 1 && <p className="mt-3 text-center text-xs text-[#9a8da0]">Deslize para o lado para ver as fotos</p>}</div></div></div>}
+      <footer id="contato" className="bg-[#281936] text-white">
+        <div className="mx-auto grid max-w-7xl gap-12 px-5 py-16 md:grid-cols-[1.2fr_.8fr_1fr] md:px-8">
+          <div><Brand light /><p className="mt-6 max-w-sm text-sm leading-7 text-white/60">Uma trajetória de trabalho social, organização comunitária e compromisso com a moradia digna em Boa Vista, Roraima.</p></div>
+          <div><h3 className="font-extrabold">Navegação</h3><div className="mt-5 space-y-3">{links.map(([label, href]) => <a key={href} href={href} className="block text-sm text-white/60 transition hover:text-white">{label}</a>)}</div></div>
+          <div><h3 className="font-extrabold">Fale com a associação</h3><div className="mt-5 space-y-4 text-sm text-white/65"><p className="flex items-start gap-3"><MapPin size={17} className="mt-0.5 shrink-0 text-[#d6b96d]" /> Avenida João Liberato, 705, bairro Caranã, Boa Vista – RR</p>
+          <p className="flex items-center gap-3"><FileText size={17} className="text-[#d6b96d]" /> CNPJ: 05.510.860/0001-99</p><p className="flex items-center gap-3"><Phone size={17} className="text-[#d6b96d]" /> Telefone não informado</p><p className="flex items-center gap-3"><Mail size={17} className="text-[#d6b96d]" /> E-mail não informado</p></div></div>
+        </div>
+        <div className="border-t border-white/10 px-5 py-5 text-center text-xs text-white/40">© {new Date().getFullYear()} ASDCC / Ajuricaba. Todos os direitos reservados.</div>
+      </footer>
+    </main>
+  );
+}
