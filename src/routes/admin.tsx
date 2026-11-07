@@ -3,7 +3,17 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { LogOut, Plus, Pencil, Trash2, LayoutDashboard, Newspaper, Images, FolderKanban, FileText, X, Upload, Loader2 } from "lucide-react";
 
-export const Route = createFileRoute("/admin")({ component: AdminPage });
+export const Route = createFileRoute("/admin")({
+  component: AdminPage,
+  head: () => ({ meta: [
+    { title: "Área administrativa | ASDCC" },
+    { name: "description", content: "Acesso restrito à administração dos conteúdos da Associação das Donas de Casa." },
+    { property: "og:title", content: "Área administrativa | ASDCC" },
+    { property: "og:description", content: "Área restrita da Associação das Donas de Casa." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+  ] }),
+});
 
 type Section = "news" | "projects" | "gallery" | "documents";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -7,7 +7,17 @@ import {
   MapPin, Phone, Mail, ShieldCheck, Home, Building2, Leaf, Images, FileText
 } from "lucide-react";
 
-export const Route = createFileRoute("/")({ component: Index });
+export const Route = createFileRoute("/")({
+  component: Index,
+  head: () => ({ meta: [
+    { title: "ASDCC | Associação das Donas de Casa" },
+    { name: "description", content: "Conheça a Associação das Donas de Casa, sua atuação social e os projetos de moradia digna em Boa Vista, Roraima." },
+    { property: "og:title", content: "ASDCC | Associação das Donas de Casa" },
+    { property: "og:description", content: "Atuação social, projetos habitacionais e novidades da associação em Boa Vista, Roraima." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+  ] }),
+});
 
 const values = [
   { icon: HeartHandshake, title: "Compromisso social", text: "Atuação voltada à promoção da moradia digna e à melhoria da qualidade de vida das famílias." },
@@ -232,7 +242,7 @@ function Index() {
           <div><Brand light /><p className="mt-6 max-w-sm text-sm leading-7 text-white/60">Uma trajetória de trabalho social, organização comunitária e compromisso com a moradia digna em Boa Vista, Roraima.</p></div>
           <div><h3 className="font-extrabold">Navegação</h3><div className="mt-5 space-y-3">{links.map(([label, href]) => <a key={href} href={href} className="block text-sm text-white/60 transition hover:text-white">{label}</a>)}</div></div>
           <div><h3 className="font-extrabold">Fale com a associação</h3><div className="mt-5 space-y-4 text-sm text-white/65"><p className="flex items-start gap-3"><MapPin size={17} className="mt-0.5 shrink-0 text-[#d6b96d]" /> Avenida João Liberato, 705, bairro Caranã, Boa Vista – RR</p>
-          <p className="flex items-center gap-3"><FileText size={17} className="text-[#d6b96d]" /> CNPJ: 05.510.860/0001-99</p><p className="flex items-center gap-3"><Phone size={17} className="text-[#d6b96d]" /> Telefone não informado</p><p className="flex items-center gap-3"><Mail size={17} className="text-[#d6b96d]" /> E-mail não informado</p></div></div>
+          <p className="flex items-center gap-3"><FileText size={17} className="text-[#d6b96d]" /> CNPJ: 05.510.860/0001-99</p><p className="flex items-start gap-3"><Phone size={17} className="mt-0.5 shrink-0" /><span><a href="tel:+559536273881" className="hover:underline">(95) 3627-3881</a> / <a href="tel:+559581167426" className="hover:underline">(95) 8116-7426</a></span></p><p className="flex items-center gap-3"><Mail size={17} className="shrink-0" /><a href="mailto:assomacf@hotmail.com" className="break-all hover:underline">assomacf@hotmail.com</a></p></div></div>
         </div>
         <div className="border-t border-white/10 px-5 py-5 text-center text-xs text-white/40">© {new Date().getFullYear()} ASDCC / Ajuricaba. Todos os direitos reservados.</div>
       </footer>
